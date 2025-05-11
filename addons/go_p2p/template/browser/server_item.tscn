@@ -1,0 +1,71 @@
+[gd_scene load_steps=5 format=3 uid="uid://dc0ca4abmqcr2"]
+
+[ext_resource type="Script" uid="uid://cg551tsvtokk7" path="res://addons/go_p2p/template/browser/scripts/SCR_server_item.gd" id="1_wsbcq"]
+[ext_resource type="Texture2D" uid="uid://cs6wxm5qy3y40" path="res://addons/go_p2p/assets/public.png" id="2_qbwwq"]
+[ext_resource type="Texture2D" uid="uid://3jo2hqi4ttde" path="res://addons/go_p2p/assets/connect_normal.png" id="3_qbwwq"]
+[ext_resource type="Texture2D" uid="uid://com6frgncj8bj" path="res://addons/go_p2p/assets/connect_hovered.png" id="4_aryox"]
+
+[node name="Item" type="Control"]
+custom_minimum_size = Vector2(700, 40)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_wsbcq")
+
+[node name="main_container" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="icon_panel" type="PanelContainer" parent="main_container"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
+[node name="ICON" type="TextureRect" parent="main_container/icon_panel"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_qbwwq")
+expand_mode = 1
+
+[node name="name_panel" type="PanelContainer" parent="main_container"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+
+[node name="NAME" type="Label" parent="main_container/name_panel"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "DEFAULT SERVER NAME TEXT "
+text_overrun_behavior = 3
+
+[node name="peer_panel" type="PanelContainer" parent="main_container"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="PEER" type="Label" parent="main_container/peer_panel"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="button_panel" type="PanelContainer" parent="main_container"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="BUTTON" type="TextureButton" parent="main_container/button_panel"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("3_qbwwq")
+texture_pressed = ExtResource("3_qbwwq")
+texture_hover = ExtResource("4_aryox")
+ignore_texture_size = true
+stretch_mode = 0
+
+[connection signal="pressed" from="main_container/button_panel/BUTTON" to="." method="_on_button_pressed"]

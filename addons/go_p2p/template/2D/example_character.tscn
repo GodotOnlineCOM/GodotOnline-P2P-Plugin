@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://do4jcujcdw15v"]
+
+[ext_resource type="Script" uid="uid://c0ldnxg2mh1ap" path="res://addons/go_p2p/template/2D/scripts/SCR_player_controller.gd.gd" id="1_hixh1"]
+[ext_resource type="Texture2D" uid="uid://baotbox3oc26q" path="res://addons/go_p2p/icon.png" id="2_q5ywa"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kvf8d"]
+size = Vector2(64, 64)
+
+[node name="ExampleCharacter" type="CharacterBody2D"]
+script = ExtResource("1_hixh1")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_kvf8d")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_q5ywa")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://co81yj3ocjpi6"]
+
+[ext_resource type="Script" uid="uid://cyf5qp564kmti" path="res://addons/go_p2p/template/2D/scripts/SCR_world.gd" id="1_xsdho"]
+[ext_resource type="PackedScene" uid="uid://do4jcujcdw15v" path="res://addons/go_p2p/template/2D/example_character.tscn" id="2_ikll0"]
+
+[node name="World" type="Node2D"]
+script = ExtResource("1_xsdho")
+player_scene = ExtResource("2_ikll0")
+
+[node name="Players" type="Node2D" parent="."]
