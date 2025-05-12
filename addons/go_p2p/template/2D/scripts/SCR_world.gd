@@ -19,12 +19,11 @@ func _ready():
 		_spawn_player(multiplayer.get_unique_id())
 	await  get_tree().create_timer(1).timeout
 	for i in multiplayer.get_peers():
-		print(i)
+
 		_spawn_player(i)
 	#start_multiplayer_game()
 
 func _mp_peer_connected(id: int):
-	print("Peer connected: ", id)
 	_spawn_player(id)
 	
 	# If we're the server/host, send our position to the new client
@@ -34,7 +33,6 @@ func _mp_peer_connected(id: int):
 			my_player.rpc_id(id, "receive_position_update", my_player.global_position)
 
 func _mp_peer_disconnected(id: int):
-	print("Peer disconnected: ", id)
 	_despawn_player(id)
 
 func _spawn_player(id: int):
@@ -62,7 +60,7 @@ func _spawn_player(id: int):
 	
 	# Store reference
 	spawned_players[id] = new_player
-	print("Spawned player for peer: ", id)
+	PrintHelper.debug("Spawned player for peer: %s" % id)
 
 func _despawn_player(id: int):
 	if not spawned_players.has(id):
@@ -73,7 +71,7 @@ func _despawn_player(id: int):
 		player.queue_free()
 	
 	spawned_players.erase(id)
-	print("Despawned player for peer: ", id)
+	PrintHelper.debug("Despawned player for peer: %s" % id)
 
 # Call this when starting/joining a game
 func start_multiplayer_game():

@@ -1,10 +1,25 @@
-[gd_scene load_steps=3 format=3 uid="uid://co81yj3ocjpi6"]
+[gd_scene load_steps=4 format=3 uid="uid://co81yj3ocjpi6"]
 
 [ext_resource type="Script" uid="uid://cyf5qp564kmti" path="res://addons/go_p2p/template/2D/scripts/SCR_world.gd" id="1_xsdho"]
 [ext_resource type="PackedScene" uid="uid://do4jcujcdw15v" path="res://addons/go_p2p/template/2D/example_character.tscn" id="2_ikll0"]
+[ext_resource type="Texture2D" uid="uid://t8eq2bjsd27j" path="res://addons/go_p2p/assets/background0.jpg" id="3_mt3nt"]
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_xsdho")
 player_scene = ExtResource("2_ikll0")
 
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+modulate = Color(0, 0, 0, 1)
+scale = Vector2(3.325, 3.325)
+texture = ExtResource("3_mt3nt")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(2.3, 2.3)
+texture = ExtResource("3_mt3nt")
+
 [node name="Players" type="Node2D" parent="."]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(-119, -657, 517, -388, 489, 439, -450, 528, -535, -333, -41, -666, -708, -675, -693, 579, -279, 680, 616, 669, 697, 108, 662, -604)
