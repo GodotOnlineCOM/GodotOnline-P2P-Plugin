@@ -11,9 +11,13 @@ const TIMEOUT: int = 60000  # Unresponsive clients timeout after 60 seconds
 const SEAL_TIME: int = 10000  # Sealed room timeout
 const INV_CODE_LENGTH: int = 5
 const DEFAULT_PORT: int = 9080
-const LOBBY_CHECK_INTERVAL: float = 15.0  # Seconds
+const LOBBY_CHECK_INTERVAL: float = 10.0
+const IP_CHECK_INTERVAL: float = 10.0   # Seconds
+const MAX_IP_LIFETIME: float = 30.0
 const MAX_LOBBY_COUNT: int = 1000  # Maximum concurrent lobbies
 const MAX_PEER_COUNT: int = 5000   # Maximum concurrent peers
+const MAX_LOBBY_PER_IP: int = 2
+const MAX_CONNECTION_PER_IP: int = 80
 
 # Server state
 var SERVER_START_TIME: String
@@ -23,7 +27,9 @@ var public_lobbies: Dictionary = {}
 var tcp_server := TCPServer.new()
 var peers: Dictionary = {}  # peer_id: Peer
 var peers_IP: Dictionary = {}  # peer_id: IP
+var overall_IP: Dictionary = {} # example {"IP":{"lobby_count":0, "connection_count":0, "last_activity": Timestamp}
 var timer: Timer
+var ip_timer: Timer
 var is_shutting_down: bool = false
 
 class Peer extends RefCounted:
@@ -79,14 +85,16 @@ class Peer extends RefCounted:
 class Lobby extends RefCounted:
 	var peers: Dictionary = {}  # peer_id: Peer
 	var host: int = -1
+	var ip: String = ""
 	var sealed: bool = false
 	var time: int = 0
 	var mesh: bool = true
 	var created_time: String
 
-	func _init(host_id: int, use_mesh: bool):
+	func _init(host_id: int, use_mesh: bool,host_ip: String):
 		host = host_id
 		mesh = use_mesh
+		ip = host_ip
 		created_time = TimeHelper.get_iso_timestamp()
 
 	func join(peer: Peer) -> bool:
@@ -163,11 +171,13 @@ func _ready() -> void:
 
 		
 		# Set up lobby cleanup timer
-		timer = Timer.new()
-		timer.timeout.connect(_lobby_cleanup_check)
+		timer = Timer.new();timer.timeout.connect(_lobby_cleanup_check)
 		timer.wait_time = LOBBY_CHECK_INTERVAL
-		add_child(timer)
-		timer.start()
+		add_child(timer);timer.start()
+		# Set up ip cleanup timer
+		ip_timer = Timer.new();ip_timer.timeout.connect(_ip_table_timeout)
+		ip_timer.wait_time = IP_CHECK_INTERVAL
+		add_child(ip_timer);ip_timer.start()
 		
 		# Start server
 		if not listen(DEFAULT_PORT):
@@ -176,7 +186,7 @@ func _ready() -> void:
 				"error": error_string(ERR_BUG)
 			})
 			await get_tree().create_timer(0.1).timeout # Don't touch for now.
-			get_tree().quit()
+			#get_tree().quit()
 		
 		LoggingHelper.info("Server started successfully", {
 			"start_time": SERVER_START_TIME,
@@ -206,7 +216,7 @@ func graceful_shutdown() -> void:
 	public_lobbies.clear()
 	peers.clear()
 	peers_IP.clear()
-	
+	overall_IP.clear()
 	# Stop the server
 	if tcp_server.is_listening():
 		tcp_server.stop()
@@ -235,6 +245,7 @@ func stop() -> void:
 		tcp_server.stop()
 	peers.clear()
 	peers_IP.clear()
+	overall_IP.clear()
 	LoggingHelper.info("Server stopped")
 
 func _process(_delta: float) -> void:
@@ -255,6 +266,58 @@ func poll() -> void:
 	# Clean up sealed lobbies
 	_cleanup_sealed_lobbies()
 
+enum MAN {CREATE,LOBBY,CONNECTION,LEAVE_LOBBY,CREATE_LOBBY,RESET}
+func _ip_management(TYPE : MAN, ip):
+	if DictionaryHelper.get_safe(overall_IP,ip,false):
+		if DictionaryHelper.get_safe(overall_IP[ip],"last_activity",false):
+			overall_IP[ip]["last_activity"] = TimeHelper.get_iso_timestamp()
+			
+	match TYPE:
+		MAN.CREATE:
+			if not DictionaryHelper.get_safe(overall_IP,ip,false):
+				overall_IP[ip] = {"lobby_count":1, "connection_count":1, "last_activity": TimeHelper.get_iso_timestamp()}
+				return true
+		MAN.LOBBY:
+			if DictionaryHelper.get_safe(overall_IP[ip],"lobby_count",false):
+				if overall_IP[ip]["lobby_count"] < MAX_LOBBY_PER_IP:
+					return true
+		MAN.CREATE_LOBBY:
+			if DictionaryHelper.get_safe(overall_IP[ip],"lobby_count",false):
+				if overall_IP[ip]["lobby_count"] < MAX_LOBBY_PER_IP:
+					overall_IP[ip]["lobby_count"] += 1
+					return true
+		MAN.LEAVE_LOBBY:
+			if DictionaryHelper.get_safe(overall_IP[ip],"lobby_count",false):
+				if overall_IP[ip]["lobby_count"] > 0:
+					overall_IP[ip]["lobby_count"] -= 1
+					return true
+		MAN.CONNECTION:
+			if DictionaryHelper.get_safe(overall_IP[ip],"connection_count",false):
+				if overall_IP[ip]["connection_count"] < MAX_CONNECTION_PER_IP:
+					overall_IP[ip]["connection_count"] += 1
+					return true
+		MAN.RESET:
+			if not DictionaryHelper.get_safe(overall_IP,ip,false):
+				overall_IP[ip] = {"lobby_count":overall_IP[ip]["lobby_count"], "connection_count":1, "last_activity": TimeHelper.get_iso_timestamp()}
+				return true
+	return false
+
+func _ip_table_timeout():
+	if overall_IP.is_empty():
+		return
+	var erased_ip_count: int
+	for i in overall_IP:
+		if DictionaryHelper.get_safe(overall_IP[i],"last_activity",false):
+			var life = float(TimeHelper.calculate_uptime(overall_IP[i]["last_activity"]))
+			if life > MAX_IP_LIFETIME and not peers_IP.values().has(i):
+				overall_IP.erase(i)
+				erased_ip_count += 1
+			elif life > MAX_IP_LIFETIME:
+				_ip_management(MAN.RESET,i)
+	if erased_ip_count > 1:
+		LoggingHelper.debug("%s IP adress erased from memory." % erased_ip_count)
+	pass
+
 func _handle_new_connection() -> void:
 	if peers.size() >= MAX_PEER_COUNT:
 		LoggingHelper.warning("Rejected new connection - maximum peer count reached", {
@@ -265,13 +328,20 @@ func _handle_new_connection() -> void:
 		temp_conn.disconnect_from_host()
 		return
 	
+	var conn = tcp_server.take_connection()
+	var ip = conn.get_connected_host()
+	
+	_ip_management(MAN.CREATE,ip)
+	if not _ip_management(MAN.CONNECTION,ip):
+		conn.disconnect_from_host()
+		return
+		
 	var id = rand.randi() % (1 << 31)
 	while peers.has(id):  # Ensure unique ID
 		id = rand.randi() % (1 << 31)
-	
-	var conn = tcp_server.take_connection()
 	peers[id] = Peer.new(id, conn)
-	peers_IP[id] = NetworkHelper.get_client_ip(peers[id].ws)
+	ip = NetworkHelper.get_client_ip(peers[id].ws)
+	peers_IP[id] = ip
 	
 	LoggingHelper.debug("New connection", {
 		"peer_id": id,
@@ -304,6 +374,7 @@ func _poll_existing_peers() -> void:
 					"ip": peers_IP.get(peer_id, "unknown")
 				})
 				to_remove.append(peer_id)
+				await get_tree().create_timer(0.05).timeout
 				peer.ws.close()
 				break
 		
@@ -311,11 +382,14 @@ func _poll_existing_peers() -> void:
 		if peer.ws.get_ready_state() == WebSocketPeer.STATE_CLOSED:
 			_handle_peer_disconnection(peer_id, peer)
 			to_remove.append(peer_id)
+			
 	
 	# Remove disconnected peers
 	for peer_id in to_remove:
 		peers.erase(peer_id)
 		peers_IP.erase(peer_id)
+
+
 
 func _handle_peer_disconnection(peer_id: int, peer: Peer) -> void:
 	LoggingHelper.info("Peer disconnected", {
@@ -328,6 +402,7 @@ func _handle_peer_disconnection(peer_id: int, peer: Peer) -> void:
 	if lobbies.has(peer.lobby):
 		var lobby = lobbies[peer.lobby]["HOST"]
 		if lobby.leave(peer):
+			_ip_management(MAN.LEAVE_LOBBY,peers_IP[peer_id])
 			LoggingHelper.info("Deleted lobby (host disconnected)", {
 				"lobby_id": peer.lobby,
 				"remaining_lobbies": lobbies.size() - 1
@@ -378,6 +453,7 @@ func _lobby_cleanup_check() -> void:
 			to_remove.append(lobby_id)
 	
 	for lobby_id in to_remove:
+		_ip_management(MAN.LEAVE_LOBBY,lobbies[lobby_id]["HOST"].ip)
 		lobbies.erase(lobby_id)
 		if public_lobbies.has(lobby_id):
 			public_lobbies.erase(lobby_id)
@@ -414,9 +490,15 @@ func _join_lobby(peer: Peer, lobby_data: String, mesh: bool) -> bool:
 	
 	# Generate new lobby if no invitation code provided
 	if inv_code.is_empty():
+		if not _ip_management(MAN.LOBBY,peers_IP[peer.id]):
+			peer.send(Message.ERROR, 0, JSON.stringify(
+				NetworkHelper.create_error_response(401, "This IP address already has an active lobby")
+			))
+			return false
+
 		inv_code = StringHelper.random_string(INV_CODE_LENGTH, "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789")
 		lobbies[inv_code] = {
-			"HOST": Lobby.new(peer.id, mesh),
+			"HOST": Lobby.new(peer.id, mesh, peers_IP[peer.id]),
 			"DATA": data
 		}
 		
@@ -429,6 +511,7 @@ func _join_lobby(peer: Peer, lobby_data: String, mesh: bool) -> bool:
 			"mesh": mesh,
 			"public": data.get("visible", false)
 		})
+		_ip_management(MAN.CREATE_LOBBY,peers_IP[peer.id])
 	else:
 		# Validate existing lobby
 		if not lobbies.has(inv_code):
@@ -469,6 +552,8 @@ func _join_lobby(peer: Peer, lobby_data: String, mesh: bool) -> bool:
 		"lobby_id": inv_code,
 		"current_peers": lobbies[inv_code]["DATA"]["current_peer"]
 	})
+	
+	
 	return true
 
 func _add_to_public_lobbies(inv_code: String, data: Dictionary) -> void:

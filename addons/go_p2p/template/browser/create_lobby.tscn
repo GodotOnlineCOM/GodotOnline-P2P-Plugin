@@ -158,3 +158,4 @@ text = "LEAVE LOBBY"
 [connection signal="pressed" from="MainContainer/VBOX/host_btn" to="." method="_on_host_btn_pressed"]
 [connection signal="pressed" from="MainContainer/VBOX2/InviteContainer/InvBtn" to="." method="_on_inv_btn_pressed"]
 [connection signal="pressed" from="MainContainer/VBOX2/start_btn" to="." method="_on_start_btn_pressed"]
+[connection signal="pressed" from="MainContainer/VBOX2/quit_btn" to="." method="_on_quit_btn_pressed"]

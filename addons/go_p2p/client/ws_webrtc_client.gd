@@ -1,5 +1,9 @@
 extends  Node
-enum Message {JOIN, ID, PEER_CONNECT, PEER_DISCONNECT, OFFER, ANSWER, CANDIDATE, SEAL, PEERS, LOBBY_LIST, CONNECT, PING, ERROR}
+
+enum Message {
+	JOIN, ID, PEER_CONNECT, PEER_DISCONNECT, OFFER, ANSWER, CANDIDATE, 
+	SEAL, PEERS, LOBBY_LIST, CONNECT, PING, ERROR
+}
 
 @export var autojoin := true
 @export var lobby := "" # Will create a new lobby if empty.
@@ -22,7 +26,7 @@ signal answer_received(id, answer)
 signal candidate_received(id, mid, index, sdp)
 signal lobby_sealed()
 signal lobby_list(list)
-signal error(message)
+signal error_occurred(message)
 
 
 var ping_timer = Timer.new()
@@ -142,8 +146,6 @@ func _process(delta: float) -> void:
 		if not _parse_msg():
 			PrintHelper.debug("Error parsing message from server.")
 	if state != old_state and state == WebSocketPeer.STATE_CLOSED:
-		code = ws.get_close_code()
-		reason = ws.get_close_reason()
 		disconnected.emit()
 	old_state = state
 
@@ -165,8 +167,11 @@ func _parse_msg():
 		Message.ID:
 			connected.emit(src_id, msg.data == "true")
 		Message.ERROR:
-			error.emit(msg.data)
-			reason = msg.data
+			error_occurred.emit(msg.data)
+			var jsData = JSON.parse_string(msg.data)
+			if DictionaryHelper.has_all_keys(jsData["error"],["code","message"]):
+				code = jsData["error"]["code"]
+				reason = jsData["error"]["message"]
 		Message.LOBBY_LIST:
 			lobby_list.emit(msg.data)
 		Message.JOIN:

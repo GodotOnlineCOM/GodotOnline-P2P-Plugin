@@ -6,6 +6,9 @@ const PEER_ITEM = preload("res://addons/go_p2p/template/browser/peer_item.tscn")
 @onready var inv_btn: TextureButton = $MainContainer/VBOX2/InviteContainer/InvBtn
 @onready var peers_container: VBoxContainer = $MainContainer/VBOX2/peer_panel/ScrollContainer/PeersContainer
 
+@onready var start_btn: Button = $MainContainer/VBOX2/start_btn
+@onready var quit_btn: Button = $MainContainer/VBOX2/quit_btn
+
 
 @onready var lobby_name: LineEdit = $MainContainer/VBOX/lobby_name
 @onready var eye: TextureButton = $MainContainer/VBOX/BOXPASS/eye
@@ -29,7 +32,7 @@ func _ready() -> void:
 	multiplayer.peer_disconnected.connect(self._mp_peer_disconnected)
 	chat_panel.self_color_identified.connect(self._color_define)
 	chat_panel.nickname_identified.connect(self._nickname_define)
-	
+	start_btn.hide()
 	vbox_2.hide()
 
 
@@ -92,6 +95,8 @@ func _on_eye_pressed() -> void:
 
 func _on_host_btn_pressed() -> void:
 	create_lobby.emit(lobby_name.text,lobby_password.text,spin_box.value,check_box.button_pressed)
+	start_btn.show()
+
 	pass
 
 
@@ -110,3 +115,8 @@ func _on_inv_btn_pressed() -> void:
 		inv_btn.texture_normal = EYE_VISIBLE
 	else:
 		inv_btn.texture_normal = EYE_HIDDEN
+
+
+func _on_quit_btn_pressed() -> void:
+	GoClient.stop()
+	pass # Replace with function body.

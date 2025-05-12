@@ -1,7 +1,7 @@
 extends Node
 # INFO
-# CURRENT VERSIONS: "version_000" for local test.
-# CURRENT VERSIONS: "version_041" for production.
+# CURRENT VERSIONS: "version_local" for local test.
+# CURRENT VERSIONS: "version_roma" for production.
 # INFO
 # API_KEY is currently under development. Enter a value not exceeding 128 bytes.
 # If you keep 'default_apikey' as the API key, you might find that other users are testing out the system too.
@@ -13,9 +13,9 @@ extends Node
 # if you want to test your code, set SERVER_MODE to True and VERSION to “version_000”.
 
 var DEBUGGER : bool = true
-var SERVER_MODE : bool = false
+var SERVER_MODE : bool = true
 var AUTO_CONNECT : bool = true
 var API_KEY : String = "default_apikey"
-var VERSION : String = "version_041"
+var VERSION : String = "version_local"
 var VERSION_CONTROL_URL : String = "https://godotonline.com/versions.json"
 var PREFIX : String = "ws://"
