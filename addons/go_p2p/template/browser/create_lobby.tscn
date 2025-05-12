@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://cys0xqj10anb1"]
+[gd_scene load_steps=6 format=3 uid="uid://cys0xqj10anb1"]
 
 [ext_resource type="Script" uid="uid://dtgvcaxn0vpuo" path="res://addons/go_p2p/template/browser/scripts/SCR_create_lobby.gd" id="1_3wdbq"]
 [ext_resource type="Texture2D" uid="uid://c8a5carolw2t2" path="res://addons/go_p2p/assets/eye_visible.png" id="1_yre5l"]
 [ext_resource type="Texture2D" uid="uid://dvydkb5r5oy8e" path="res://addons/go_p2p/assets/eye_hidden.png" id="2_3wdbq"]
+[ext_resource type="PackedScene" uid="uid://b6j1vosg5yqbd" path="res://addons/go_p2p/template/chat/chat_panel.tscn" id="4_qqvgi"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qqvgi"]
 
@@ -134,27 +135,8 @@ grow_vertical = 2
 [node name="PeersContainer" type="VBoxContainer" parent="MainContainer/VBOX2/peer_panel/ScrollContainer"]
 layout_mode = 2
 
-[node name="chat_panel" type="Panel" parent="MainContainer/VBOX2"]
-custom_minimum_size = Vector2(0, 150)
+[node name="chat_panel" parent="MainContainer/VBOX2" instance=ExtResource("4_qqvgi")]
 layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/VBOX2/chat_panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="chat" type="RichTextLabel" parent="MainContainer/VBOX2/chat_panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 120)
-layout_mode = 2
-bbcode_enabled = true
-
-[node name="typeText" type="LineEdit" parent="MainContainer/VBOX2/chat_panel/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 8
-placeholder_text = "..."
 
 [node name="HSeparator" type="HSeparator" parent="MainContainer/VBOX2"]
 custom_minimum_size = Vector2(0, 20)

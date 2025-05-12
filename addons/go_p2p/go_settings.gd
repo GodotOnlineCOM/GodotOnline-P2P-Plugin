@@ -16,6 +16,6 @@ var DEBUGGER : bool = true
 var SERVER_MODE : bool = false
 var AUTO_CONNECT : bool = true
 var API_KEY : String = "default_apikey"
-var VERSION : String = "version_000"
+var VERSION : String = "version_041"
 var VERSION_CONTROL_URL : String = "https://godotonline.com/versions.json"
 var PREFIX : String = "ws://"

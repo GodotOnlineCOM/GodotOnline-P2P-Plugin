@@ -51,10 +51,8 @@ func _create_lobby(lobby_name,lobby_pass,max_peer,status):
 	GoClient.join_lobby("",lobby_pass,lobby_name,max_peer,status)
 
 
-func _quick_search(code):
-	GoClient.start(GoClient.full_URL)
-	await get_tree().create_timer(1).timeout
-	GoClient.join_lobby(code)
+func _quick_search(code,pw):
+	GoClient.join_lobby(code,pw)
 
 
 func _mp_server_connected():

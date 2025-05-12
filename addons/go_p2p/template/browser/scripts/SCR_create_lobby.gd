@@ -6,15 +6,13 @@ const PEER_ITEM = preload("res://addons/go_p2p/template/browser/peer_item.tscn")
 @onready var inv_btn: TextureButton = $MainContainer/VBOX2/InviteContainer/InvBtn
 @onready var peers_container: VBoxContainer = $MainContainer/VBOX2/peer_panel/ScrollContainer/PeersContainer
 
-@onready var chat: RichTextLabel = $MainContainer/VBOX2/chat_panel/VBoxContainer/chat
-@onready var type_text: LineEdit = $MainContainer/VBOX2/chat_panel/VBoxContainer/typeText
-
 
 @onready var lobby_name: LineEdit = $MainContainer/VBOX/lobby_name
 @onready var eye: TextureButton = $MainContainer/VBOX/BOXPASS/eye
 @onready var lobby_password: LineEdit = $MainContainer/VBOX/BOXPASS/lobby_password
 @onready var check_box: CheckBox = $MainContainer/VBOX/BOXVISIBLE/CheckBox
 @onready var spin_box: SpinBox = $MainContainer/VBOX/SpinBox
+@onready var chat_panel: Panel = $MainContainer/VBOX2/chat_panel
 
 @export var EYE_VISIBLE : CompressedTexture2D
 @export var EYE_HIDDEN : CompressedTexture2D
@@ -29,26 +27,25 @@ func _ready() -> void:
 	GoClient.disconnected.connect(self._lobby_disconnected)
 	multiplayer.peer_connected.connect(self._mp_peer_connected)
 	multiplayer.peer_disconnected.connect(self._mp_peer_disconnected)
-	self_color = Color(randf_range(0,1),randf_range(0,1),randf_range(0,1))
+	chat_panel.self_color_identified.connect(self._color_define)
+	chat_panel.nickname_identified.connect(self._nickname_define)
 	
-	if OS.has_environment("USERNAME"):
-		lobby_name.text = OS.get_environment("USERNAME") + "'s Lobby"
-		nickname = OS.get_environment("USERNAME")
-	else:
-		lobby_name.text = "My Lobby"
-		nickname = "User"
 	vbox_2.hide()
-	
+
+
+func _color_define(cl):
+	self_color = cl
+
+func _nickname_define(nick):
+	lobby_name.text = "%s's Lobby" % nick
+	nickname = nick
+
 @rpc("any_peer", "call_local")
 func _register_peer(id,nick,color):
 	peers[id] = {"nickname":nick,"color":color.to_html(),"is_server":false}
 	if id == multiplayer.get_unique_id():
 		peers[id]["is_server"] = true
 	pass
-
-@rpc("any_peer", "call_local")
-func _chat_message(nick, message, color):
-	chat.append_text("[color=%s]%s[/color]: %s\n" % [ str(color), nick, message])
 
 func _mp_peer_connected(id: int):
 	_register_peer.rpc(multiplayer.get_unique_id(),nickname,self_color)
@@ -83,14 +80,6 @@ func _lobby_disconnected():
 	peers.clear()
 	for i in peers_container.get_children():
 		i.queue_free()
-
-
-func _input(event: InputEvent) -> void:
-	if Input.is_key_pressed(KEY_ENTER):
-		if type_text.text != "" and multiplayer.get_peers().size() > 0:
-			_chat_message.rpc(nickname,type_text.text,self_color.to_html())
-			type_text.text = ""
-		pass
 
 func _on_eye_pressed() -> void:
 	if eye_status:

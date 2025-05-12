@@ -12,7 +12,7 @@ signal join_lobby(code,pw)
 
 func _initial(_status,_name,_current_peer,_max_peer,_code):
 	item_name.text = _name
-	item_peer.text = str(_current_peer) + "/" + str(_max_peer)
+	item_peer.text = str(int(_current_peer)) + "/" + str(int(_max_peer))
 	inv_code = _code
 	status = _status
 	if _status:
