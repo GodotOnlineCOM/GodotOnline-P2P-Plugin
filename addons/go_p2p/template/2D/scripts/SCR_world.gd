@@ -17,11 +17,10 @@ func _ready():
 	# Spawn the local player immediately if we're in a multiplayer session
 	if multiplayer.has_multiplayer_peer():
 		_spawn_player(multiplayer.get_unique_id())
-	await  get_tree().create_timer(1).timeout
+	
 	for i in multiplayer.get_peers():
 
 		_spawn_player(i)
-	#start_multiplayer_game()
 
 func _mp_peer_connected(id: int):
 	_spawn_player(id)
@@ -64,9 +63,3 @@ func _despawn_player(id: int):
 	
 	spawned_players.erase(id)
 	PrintHelper.debug("Despawned player for peer: %s" % id)
-
-# Call this when starting/joining a game
-func start_multiplayer_game():
-	# Spawn local player if in multiplayer
-	if multiplayer.has_multiplayer_peer():
-		_spawn_player(multiplayer.get_unique_id())

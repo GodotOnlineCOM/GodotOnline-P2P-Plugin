@@ -51,7 +51,7 @@ func _register_peer(id,nick,color):
 	pass
 
 func _mp_peer_connected(id: int):
-	_register_peer.rpc(multiplayer.get_unique_id(),nickname,self_color)
+	_register_peer.rpc(id,nickname,self_color)
 	_add_peers()
 
 func _mp_peer_disconnected(id: int):

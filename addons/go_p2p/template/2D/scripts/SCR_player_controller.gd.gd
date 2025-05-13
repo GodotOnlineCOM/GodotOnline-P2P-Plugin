@@ -85,6 +85,7 @@ func estimate_network_latency() -> float:
 
 # Basic Functions
 func _ready():
+	await get_tree().create_timer(1).timeout # Don't delete; required for error handling
 	if is_local_player:
 		multiplayer.peer_connected.connect(self._on_peer_connected)
 		send_ping()  # First Ping
