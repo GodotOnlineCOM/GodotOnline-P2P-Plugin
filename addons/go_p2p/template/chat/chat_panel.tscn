@@ -18,6 +18,7 @@ grow_vertical = 2
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 bbcode_enabled = true
+scroll_following = true
 
 [node name="typeText" type="LineEdit" parent="VBoxContainer"]
 layout_mode = 2

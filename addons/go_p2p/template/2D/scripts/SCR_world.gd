@@ -26,12 +26,6 @@ func _ready():
 func _mp_peer_connected(id: int):
 	_spawn_player(id)
 	
-	# If we're the server/host, send our position to the new client
-	if multiplayer.is_server():
-		var my_player = spawned_players.get(multiplayer.get_unique_id())
-		if my_player:
-			my_player.rpc_id(id, "receive_position_update", my_player.global_position)
-
 func _mp_peer_disconnected(id: int):
 	_despawn_player(id)
 
@@ -46,18 +40,16 @@ func _spawn_player(id: int):
 	
 	# Configure player
 	new_player.name = str(id)
+	
 	new_player.set_multiplayer_authority(id)
 	
 	# Set as local player if this is our ID
 	if id == multiplayer.get_unique_id():
 		new_player.is_local_player = true
-		# Position local player at spawn point
-		new_player.global_position = Vector2(200, 100)  # Set your spawn position
 	else:
 		new_player.is_local_player = false
-		# Position remote players randomly (or use your spawn system)
-		new_player.global_position = Vector2(randi_range(100, 500), randi_range(100, 500))
-	
+		
+	new_player.global_position = Vector2(randi_range(0, 10), randi_range(0, 100))
 	# Store reference
 	spawned_players[id] = new_player
 	PrintHelper.debug("Spawned player for peer: %s" % id)

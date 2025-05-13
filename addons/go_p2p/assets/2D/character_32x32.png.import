@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://t8eq2bjsd27j"
-path="res://.godot/imported/background0.jpg-3d05d102930a133d83ea8b5b37036c5f.ctex"
+uid="uid://omtapnwcct0y"
+path="res://.godot/imported/character_32x32.png-ab48b0a8bee1e76ca8baca2d01111ef0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/go_p2p/assets/background0.jpg"
-dest_files=["res://.godot/imported/background0.jpg-3d05d102930a133d83ea8b5b37036c5f.ctex"]
+source_file="res://addons/go_p2p/assets/2D/character_32x32.png"
+dest_files=["res://.godot/imported/character_32x32.png-ab48b0a8bee1e76ca8baca2d01111ef0.ctex"]
 
 [params]
 
@@ -31,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
