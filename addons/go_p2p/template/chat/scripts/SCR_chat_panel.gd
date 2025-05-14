@@ -30,11 +30,9 @@ func _input(event: InputEvent) -> void:
 			_chat_message.rpc(nickname,type_text.text,self_color.to_html())
 			type_text.text = ""
 
-var usernames = ["Bob","Sara","Smith","Pyro","Stan"]
 
 func _get_os_username() -> String:
 	if OS.has_environment("USERNAME"):
-		var rng = randi_range(0,usernames.size() -1)
-		return usernames[rng]
+		return OS.get_environment("USERNAME")
 	else:
-		return "User"
+		return "User %s" % multiplayer.get_unique_id()

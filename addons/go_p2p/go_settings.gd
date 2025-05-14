@@ -10,12 +10,12 @@ extends Node
 # INFO
 # If you set SERVER_MODE to True, you can host the server on your own machine.
 #  -QUICK TIP-
-# if you want to test your code, set SERVER_MODE to True and VERSION to “version_000”.
+# if you want to test your code, set SERVER_MODE to True and VERSION to “version_local”.
 
 var DEBUGGER : bool = true
-var SERVER_MODE : bool = true
+var SERVER_MODE : bool = false
 var AUTO_CONNECT : bool = true
 var API_KEY : String = "default_apikey"
-var VERSION : String = "version_local"
+var VERSION : String = "version_roma"
 var VERSION_CONTROL_URL : String = "https://godotonline.com/versions.json"
 var PREFIX : String = "ws://"

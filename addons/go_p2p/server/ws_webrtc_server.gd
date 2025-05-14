@@ -289,7 +289,7 @@ func _ip_management(TYPE : MAN, ip):
 					return true
 		MAN.LEAVE_LOBBY:
 			if DictionaryHelper.get_safe(overall_IP[ip],"lobby_count",false):
-				if overall_IP[ip]["lobby_count"] > 0:
+				if overall_IP[ip]["lobby_count"] > 1:
 					overall_IP[ip]["lobby_count"] -= 1
 					return true
 		MAN.CONNECTION:
