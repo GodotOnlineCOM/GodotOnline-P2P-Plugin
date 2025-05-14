@@ -18,6 +18,7 @@ const MAX_LOBBY_COUNT: int = 1000  # Maximum concurrent lobbies
 const MAX_PEER_COUNT: int = 5000   # Maximum concurrent peers
 const MAX_LOBBY_PER_IP: int = 2
 const MAX_CONNECTION_PER_IP: int = 80
+const MAX_PACKET_SIZE = 1024 # Maximum packet size server can accept
 
 # Server state
 var SERVER_START_TIME: String
@@ -402,7 +403,7 @@ func _handle_peer_disconnection(peer_id: int, peer: Peer) -> void:
 	if lobbies.has(peer.lobby):
 		var lobby = lobbies[peer.lobby]["HOST"]
 		if lobby.leave(peer):
-			_ip_management(MAN.LEAVE_LOBBY,peers_IP[peer_id])
+			_ip_management(MAN.LEAVE_LOBBY,lobby.ip)
 			LoggingHelper.info("Deleted lobby (host disconnected)", {
 				"lobby_id": peer.lobby,
 				"remaining_lobbies": lobbies.size() - 1
@@ -574,6 +575,12 @@ func _parse_msg(peer: Peer) -> bool:
 		peer.send(Message.ERROR, 0, JSON.stringify(
 			NetworkHelper.create_error_response(400, "Empty packet received")
 		))
+		return false
+	
+	if pkt.size() > MAX_PACKET_SIZE:
+		peer.send(Message.ERROR, 0, JSON.stringify(
+				NetworkHelper.create_error_response(400, "Max packet size reached")
+			))
 		return false
 	
 	var pkt_str: String

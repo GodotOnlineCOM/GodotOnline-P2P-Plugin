@@ -41,7 +41,6 @@ text = "Lobby Name"
 
 [node name="lobby_name" type="LineEdit" parent="MainContainer/VBOX"]
 layout_mode = 2
-max_length = 32
 
 [node name="LOBBYPASSWORD" type="Label" parent="MainContainer/VBOX"]
 layout_mode = 2

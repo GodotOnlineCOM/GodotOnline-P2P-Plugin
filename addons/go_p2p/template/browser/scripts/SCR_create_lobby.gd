@@ -102,6 +102,7 @@ func _on_host_btn_pressed() -> void:
 
 func _on_start_btn_pressed() -> void:
 	_start_lobby.rpc()
+	GoClient.seal_lobby()
 	pass 
 
 @rpc("any_peer","call_local")
@@ -119,4 +120,4 @@ func _on_inv_btn_pressed() -> void:
 
 func _on_quit_btn_pressed() -> void:
 	GoClient.stop()
-	pass # Replace with function body.
+	pass
