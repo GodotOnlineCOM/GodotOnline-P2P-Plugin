@@ -12,7 +12,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh '/usr/local/bin/Godot_v4.4.1-stable_linux.x86_64 --headless --export Linux/X11'
+                sh '/usr/local/bin/Godot_v4.4.1-stable_linux.x86_64 --headless --export-release Linux/X11'
             }
         }
     }
