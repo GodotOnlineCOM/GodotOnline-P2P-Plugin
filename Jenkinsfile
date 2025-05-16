@@ -13,7 +13,7 @@ pipeline {
         stage('Build & Export') {
             steps {
                 sh '''
-                docker run --rm -it \
+                docker run --rm \
                 -v $(pwd):/app \
                 -w /app \
                 ${DOCKER_IMAGE} /usr/local/bin/Godot_v4.4-stable_linux.x86_64 --headless --export-release Linux ${PROJECT_PATH}
