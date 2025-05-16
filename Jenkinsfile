@@ -1,13 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'godot-build-image' // Docker için özel image kullanıyoruz
-            args '--rm'
-        }
-    }
-    environment {
-        DISPLAY = ":0" // Bazı grafik bağımlılıkları için
-    }
+    agent any
     stages {
         stage('Checkout') {
             steps {
@@ -16,7 +8,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh '/usr/local/bin/Godot_v4.4.1-stable_linux.x86_64 --headless --export Linux/X11'
+                sh 'docker run --rm godot-build-image /usr/local/bin/Godot_v4.4.1-stable_linux.x86_64 --headless --export Linux/X11'
             }
         }
     }
