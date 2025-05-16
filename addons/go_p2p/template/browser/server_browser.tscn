@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://jg6nqxsvveio"]
+[gd_scene load_steps=8 format=3 uid="uid://jg6nqxsvveio"]
 
 [ext_resource type="Script" uid="uid://dufxh8ueoik2j" path="res://addons/go_p2p/template/browser/scripts/SCR_server_browser.gd" id="1_gv3i7"]
 [ext_resource type="PackedScene" uid="uid://cys0xqj10anb1" path="res://addons/go_p2p/template/browser/create_lobby.tscn" id="2_1pirx"]
 [ext_resource type="PackedScene" uid="uid://ra85b6k1sbvn" path="res://addons/go_p2p/template/browser/server_search.tscn" id="2_gr4sm"]
+[ext_resource type="PackedScene" uid="uid://dc0ca4abmqcr2" path="res://addons/go_p2p/template/browser/server_item.tscn" id="2_nrigk"]
 [ext_resource type="Texture2D" uid="uid://3jo2hqi4ttde" path="res://addons/go_p2p/assets/connect_normal.png" id="4_x6fdm"]
 [ext_resource type="Texture2D" uid="uid://com6frgncj8bj" path="res://addons/go_p2p/assets/connect_hovered.png" id="5_nrigk"]
+[ext_resource type="PackedScene" uid="uid://cis3i6ju1qxem" path="res://addons/go_p2p/template/browser/profile.tscn" id="5_oh0w4"]
 
 [node name="ServerBrowser" type="Control"]
 layout_mode = 3
@@ -14,6 +16,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_gv3i7")
+SERVER_ITEM = ExtResource("2_nrigk")
 
 [node name="background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -42,11 +45,13 @@ grow_vertical = 2
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 current_tab = 0
-tab_count = 2
+tab_count = 3
 tab_0/title = "Server Browser"
 tab_1/title = "Create Lobby"
+tab_2/title = "Profile"
 
 [node name="browser_container" type="HBoxContainer" parent="main_container"]
+visible = false
 layout_mode = 2
 
 [node name="server_panel" type="Panel" parent="main_container/browser_container"]
@@ -102,6 +107,9 @@ anchor_right = 0.5
 offset_left = -325.0
 offset_right = 325.0
 grow_horizontal = 2
+
+[node name="Profile" parent="main_container" instance=ExtResource("5_oh0w4")]
+layout_mode = 2
 
 [node name="Label" type="Label" parent="main_container"]
 layout_mode = 2

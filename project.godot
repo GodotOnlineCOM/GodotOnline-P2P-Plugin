@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 GoSettings="*res://addons/go_p2p/go_settings.gd"
 GoClient="*res://addons/go_p2p/client/multiplayer_client.gd"
 GoServer="*res://addons/go_p2p/server/ws_webrtc_server.gd"
+GoData="*res://addons/go_p2p/go_data.gd"
 
 [debug]
 

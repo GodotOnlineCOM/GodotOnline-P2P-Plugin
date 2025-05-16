@@ -27,6 +27,8 @@ layout_mode = 2
 [node name="PEERNAME" type="RichTextLabel" parent="HBox/name_panel"]
 layout_mode = 2
 bbcode_enabled = true
+scroll_active = false
+vertical_alignment = 1
 
 [node name="button_panel" type="PanelContainer" parent="HBox"]
 custom_minimum_size = Vector2(50, 0)

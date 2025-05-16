@@ -3,7 +3,7 @@ extends Node
 # Message types
 enum Message {
 	JOIN, ID, PEER_CONNECT, PEER_DISCONNECT, OFFER, ANSWER, CANDIDATE, 
-	SEAL, PEERS, LOBBY_LIST, CONNECT, PING, ERROR
+	SEAL, PEERS, LOBBY_LIST, CONNECT, PING, ERROR, KICK
 }
 
 # Configuration constants
@@ -569,12 +569,29 @@ func _add_to_public_lobbies(inv_code: String, data: Dictionary) -> void:
 		}
 	}
 
+func _kick_client(id,inv_code,target_id) -> bool:
+	if not DictionaryHelper.get_safe(lobbies,inv_code):
+		return false
+	var lobby = lobbies[inv_code]["HOST"]
+	if not id == lobby.host:
+		return false
+	if not DictionaryHelper.get_safe(lobby.peers,int(target_id)):
+		return false
+		
+	
+	var peer = lobby.peers[int(target_id)]
+	peer.send(Message.ERROR, 0, JSON.stringify(
+			NetworkHelper.create_error_response(600, "Kicked from server")
+		))
+
+	lobby.leave(peer)
+	LoggingHelper.debug("%s kicked by %s from %s" % [int(target_id),id,inv_code])
+	return true
+
 func _parse_msg(peer: Peer) -> bool:
 	var pkt = peer.ws.get_packet()
 	if pkt.is_empty():
-		peer.send(Message.ERROR, 0, JSON.stringify(
-			NetworkHelper.create_error_response(400, "Empty packet received")
-		))
+		
 		return false
 	
 	if pkt.size() > MAX_PACKET_SIZE:
@@ -633,7 +650,15 @@ func _parse_msg(peer: Peer) -> bool:
 		Message.PING:
 			peer.time = Time.get_ticks_msec()
 			return true
-			
+		
+		Message.KICK:
+			if not StringHelper.is_valid_json(msg.data):
+				return false
+			var parsed_data = JSON.parse_string(msg.data)
+			if not DictionaryHelper.has_all_keys(parsed_data,["inv_code","target"]):
+				return false
+			return _kick_client(peer.id,parsed_data["inv_code"],parsed_data["target"])
+		
 		Message.JOIN:
 			if not peer.lobby.is_empty():
 				peer.send(Message.ERROR, 0, JSON.stringify(

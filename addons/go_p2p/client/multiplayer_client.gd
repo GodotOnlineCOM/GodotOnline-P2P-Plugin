@@ -72,6 +72,10 @@ func _connected(id, use_mesh):
 func _lobby_joined(lobby):
 	self.lobby = lobby
 
+func _kick_peer(id):
+	var info = {"inv_code":lobby,"target":id}
+	return _send_msg(Message.KICK, 0 if mesh else 1, JSON.stringify(info))
+
 
 func _lobby_sealed():
 	sealed = true

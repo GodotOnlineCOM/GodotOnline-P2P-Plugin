@@ -53,6 +53,8 @@ text = "Search Server"
 
 [node name="search_line" type="LineEdit" parent="VBoxContainer"]
 layout_mode = 2
+max_length = 20
+editable = false
 
 [connection signal="text_changed" from="VBoxContainer/INVBOX/inv_code" to="." method="_on_inv_code_text_changed"]
 [connection signal="pressed" from="VBoxContainer/INVBOX/join_btn" to="." method="_on_join_btn_pressed"]

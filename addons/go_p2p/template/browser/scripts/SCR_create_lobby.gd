@@ -20,9 +20,7 @@ const PEER_ITEM = preload("res://addons/go_p2p/template/browser/peer_item.tscn")
 @export var EYE_VISIBLE : CompressedTexture2D
 @export var EYE_HIDDEN : CompressedTexture2D
 var eye_status = true
-var nickname = ""
 var peers = {}
-var self_color = Color(0,0,0)
 signal create_lobby(lobby_name,lobby_pass,max_peer,status)
 
 func _ready() -> void:
@@ -30,49 +28,46 @@ func _ready() -> void:
 	GoClient.disconnected.connect(self._lobby_disconnected)
 	multiplayer.peer_connected.connect(self._mp_peer_connected)
 	multiplayer.peer_disconnected.connect(self._mp_peer_disconnected)
-	chat_panel.self_color_identified.connect(self._color_define)
-	chat_panel.nickname_identified.connect(self._nickname_define)
 	start_btn.hide()
 	vbox_2.hide()
+	lobby_name.text = "%s' Lobby" % GoData.MYusername
 
-
-func _color_define(cl):
-	self_color = cl
-
-func _nickname_define(nick):
-	lobby_name.text = "%s's Lobby" % nick
-	nickname = nick
 
 @rpc("any_peer", "call_local")
 func _register_peer(id,nick,color):
-	peers[id] = {"nickname":nick,"color":color.to_html(),"is_server":false}
+	GoData.peers[id] = {"nickname":nick,"color":color.to_html(),"is_server":false}
 	if id == multiplayer.get_unique_id():
-		peers[id]["is_server"] = true
+		GoData.peers[id]["is_server"] = true
 	pass
 
 func _mp_peer_connected(id: int):
-	_register_peer.rpc(id,nickname,self_color)
+	_register_peer.rpc(multiplayer.get_unique_id(),GoData.MYusername,GoData.MYcolor)
 	_add_peers()
 
 func _mp_peer_disconnected(id: int):
-	if peers.has(id):
-		peers.erase(id)
+	if GoData.peers.has(id):
+		GoData.peers.erase(id)
 	_add_peers()
 
 func _add_peers():
 	await get_tree().create_timer(0.1).timeout
-	for i in peers_container.get_children():
-		i.queue_free()
-	for i2 in peers:
+	for node in peers_container.get_children():
+		node.queue_free()
+	for peer in GoData.peers:
 		var item = PEER_ITEM.instantiate()
 		peers_container.add_child(item)
-		item._initial(i2,peers[i2]["nickname"],peers[i2]["color"],peers[i2]["is_server"])
+		item._initial(peer,
+			GoData.peers[peer]["nickname"],
+			GoData.peers[peer]["color"],
+			GoData.peers[peer]["is_server"])
+		
 		if multiplayer.is_server():
 			item.kick_peer.connect(self._kick_peer)
 	pass
 
 func _kick_peer(id):
-	GoClient.rmv_peer(id)
+	GoClient._kick_peer(id)
+	_mp_peer_disconnected(id)
 
 
 func _lobby_joined(lobby):
@@ -80,9 +75,10 @@ func _lobby_joined(lobby):
 	inv_code.text = lobby
 
 func _lobby_disconnected():
-	peers.clear()
-	for i in peers_container.get_children():
-		i.queue_free()
+	GoData.peers.clear()
+	for node in peers_container.get_children():
+		node.queue_free()
+		
 
 func _on_eye_pressed() -> void:
 	if eye_status:
@@ -96,7 +92,6 @@ func _on_eye_pressed() -> void:
 func _on_host_btn_pressed() -> void:
 	create_lobby.emit(lobby_name.text,lobby_password.text,spin_box.value,check_box.button_pressed)
 	start_btn.show()
-
 	pass
 
 

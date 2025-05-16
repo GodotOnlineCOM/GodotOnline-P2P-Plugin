@@ -6,13 +6,14 @@ extends Control
 @onready var create_lobby: Control = $main_container/create_container/create_panel/create_lobby
 @onready var server_container: VBoxContainer = $main_container/browser_container/server_panel/ScrollContainer/server_container
 @onready var window_pass: Window = $WindowPass
+@onready var profile: Control = $main_container/Profile
 
 
 @onready var pass_btn: TextureButton = $WindowPass/HBox/pass_btn
 @onready var password: LineEdit = $WindowPass/HBox/password
 
-const SERVER_ITEM = preload("res://addons/go_p2p/template/browser/server_item.tscn")
-var last_inv_code
+@export var SERVER_ITEM: PackedScene
+var last_inv_code: String
 
 func _ready() -> void:
 	server_search.quick_search.connect(self._quick_search)
@@ -31,6 +32,7 @@ func _ready() -> void:
 	
 	altmain_container.show()
 	create_container.hide()
+	profile.hide()
 	window_pass.hide()
 
 func _input(event: InputEvent) -> void:
@@ -39,13 +41,19 @@ func _input(event: InputEvent) -> void:
 			GoClient._get_lobby_list()
 
 func _on_tab_bar_tab_changed(tab: int) -> void:
-	if tab == 0:
-		altmain_container.show()
-		create_container.hide()
-	else:
-		altmain_container.hide()
-		create_container.show()
-	pass 
+	match tab:
+		0:
+			altmain_container.show()
+			create_container.hide()
+			profile.hide()
+		1:
+			altmain_container.hide()
+			create_container.show()
+			profile.hide()
+		2:
+			altmain_container.hide()
+			create_container.hide()
+			profile.show()
 
 func _create_lobby(lobby_name,lobby_pass,max_peer,status):
 	GoClient.join_lobby("",lobby_pass,lobby_name,max_peer,status)

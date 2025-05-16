@@ -2,7 +2,7 @@ extends  Node
 
 enum Message {
 	JOIN, ID, PEER_CONNECT, PEER_DISCONNECT, OFFER, ANSWER, CANDIDATE, 
-	SEAL, PEERS, LOBBY_LIST, CONNECT, PING, ERROR
+	SEAL, PEERS, LOBBY_LIST, CONNECT, PING, ERROR, KICK
 }
 
 @export var autojoin := true
@@ -201,6 +201,7 @@ func _get_lobby_list():
 	if ws.get_ready_state() != WebSocketPeer.STATE_OPEN:
 		connect_to_url(full_URL);await get_tree().create_timer(0.5).timeout # gives enough connection time
 	return _send_msg(Message.LOBBY_LIST, 0 if mesh else 1, GoSettings.API_KEY)
+
 
 func connect_server():
 	return _send_msg(Message.CONNECT, 0 if mesh else 1, GoSettings.API_KEY)
