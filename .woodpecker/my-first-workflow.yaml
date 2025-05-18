@@ -9,6 +9,5 @@ steps:
       - echo "This is the build step"
       - godot --version
       - godot --headless --no-window --export-release "Linux" /bin/webrtc/server2.x86_64
-      - ls
     volumes:
       - /bin/webrtc
