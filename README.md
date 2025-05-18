@@ -5,10 +5,10 @@
 - **[WebRTC-Native](https://github.com/godotengine/webrtc-native/releases)** _(YOU NEED THIS FOR THE PROJECT TO WORK!)_
 
 ## Installation Steps
-1. Clone this repository
-2. Open the project using Godot 4.x
+1. Clone this repository.
+2. Open the project using **Godot 4.x**.
 3. Enable the plugin in **Project Settings**.
-4. Download latest WebRTC-Native extension from github.
+4. Download latest **[WebRTC-Native](https://github.com/godotengine/webrtc-native/releases)** extension from github.
 5. Place the **WebRTC-Native** folder inside your project.
 6. Reload the project.
 7. Configure `go_settings.gd`.
