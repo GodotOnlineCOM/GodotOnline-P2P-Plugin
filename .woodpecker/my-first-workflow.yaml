@@ -15,7 +15,7 @@ steps:
       - wget https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_linux.x86_64.zip
       - unzip Godot_v4.4-stable_linux.x86_64.zip -d ./
       - chmod +x Godot_v4.4-stable_linux.x86_64
-      - apt update && apt install -y wget unzip libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
+      - apt update && apt install -y wget unzip libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libfontconfig1 libfontconfig1-dev
       - wget https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz
 
       
