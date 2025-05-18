@@ -15,7 +15,7 @@ steps:
     commands:
       - apt update && apt install -y wget unzip
       - wget https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_linux.x86_64.zip
-      - mkdir /workspace/godot
+      - mkdir /godot
       - unzip Godot_v4.4-stable_linux.x86_64.zip -d /workspace/godot
       - chmod +x /workspace/godot/Godot_v4.4-stable_linux.x86_64
 
@@ -23,6 +23,7 @@ steps:
     image: ubuntu
     commands:
       - cd /workspace
+      - mkdir /build
       - /workspace/godot/Godot_v4.4-stable_linux.x86_64 --export "Linux/X11" build/game.x86_64
 
   - name: Upload Artifacts
