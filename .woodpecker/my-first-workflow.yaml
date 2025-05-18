@@ -1,6 +1,4 @@
----
-# Godot 4.4 project pipeline using barichello/godot-ci
-# Works with Woodpecker v1.0+
+version: "1"
 
 variables:
   GODOT_VERSION: "4.4"
@@ -12,7 +10,7 @@ workspace:
 
 steps:
   validate:
-    name: "Validate Project"
+    name: Validate Project
     image: barichello/godot-ci:${GODOT_VERSION}
     commands:
       - godot --version
@@ -21,7 +19,7 @@ steps:
       event: [push, pull_request, tag]
 
   build:
-    name: "Build Project"
+    name: Build Project
     image: barichello/godot-ci:${GODOT_VERSION}
     commands:
       - godot --headless --build-solutions --quit
@@ -30,7 +28,7 @@ steps:
       event: [push, pull_request, tag]
 
   test:
-    name: "Run Tests"
+    name: Run Tests
     image: barichello/godot-ci:${GODOT_VERSION}
     commands:
       - godot --headless --quit --test
@@ -39,7 +37,7 @@ steps:
       event: [push, pull_request]
 
   export-html5:
-    name: "Export HTML5"
+    name: Export HTML5
     image: barichello/godot-ci:${GODOT_VERSION}
     commands:
       - mkdir -p ${EXPORT_DIR}/html5
@@ -48,10 +46,10 @@ steps:
     depends_on: [test]
     when:
       event: tag
-      branch: main  # Sadece main branch'deki tag'ler için
+      branch: main
 
   export-linux:
-    name: "Export Linux"
+    name: Export Linux
     image: barichello/godot-ci:${GODOT_VERSION}
     commands:
       - mkdir -p ${EXPORT_DIR}/linux
@@ -60,11 +58,3 @@ steps:
     when:
       event: tag
       branch: main
-
-services:
-  xvfb:
-    image: durdn/atlassian-xvfb
-    commands:
-      - Xvfb :1 -screen 0 1024x768x24
-    when:
-      event: [push, pull_request, tag]
