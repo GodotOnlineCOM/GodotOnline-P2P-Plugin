@@ -18,3 +18,6 @@
 var SERVER_MODE = false  # Set true if running a server
 var API_KEY = "your_api_key_here"  # TODO: You can put anything you want less than 128 byte.
 var VERSION = "version_roma"  # Production version or use "version_local" for local test
+```
+
+You can find the documentation here if you need more information. [CLICK HERE](https://godotonline.com/?docs=godot-online-p2p)
