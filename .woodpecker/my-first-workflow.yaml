@@ -13,6 +13,7 @@ steps:
     image: ubuntu
     commands:
       - ls
+      - godot --version
       - godot --headless --export-debug "Linux/X11" build/server.x86_64
 
   - name: Upload Artifacts
