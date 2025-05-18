@@ -22,7 +22,7 @@ steps:
   - name: Build
     image: ubuntu
     commands:
-      - ./Godot_v4.4-stable_linux.x86_64 --export-release "Test Server" server.x86_64
+      - ./Godot_v4.4-stable_linux.x86_64 --headless --no-window --export-release "Test Server" server.x86_64
       - ls
 
 
