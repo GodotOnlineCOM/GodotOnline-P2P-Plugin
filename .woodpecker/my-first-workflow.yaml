@@ -1,22 +1,11 @@
 when:
   - event: push
-    branch: master
+    branch: main
 
 steps:
-  - name: Clone Repository
-    image: alpine/git
+  - name: build
+    image: debian
     commands:
-      - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git /workspace/webrtc
-      - cd /workspace/webrtc
-
-  - name: Build Godot Project
-    image: ubuntu
-    commands:
+      - echo "This is the build step"
+      - echo "binary-data-123" > executable
       - pwd
-      - cd /workspace/webrtc
-      - /workspace/godot/Godot_v4.4-stable_linux.x86_64 --headless --export "Linux/X11" build/server.x86_64
-
-  - name: Upload Artifacts
-    image: alpine
-    commands:
-      - mv /workspace/webrtc/build/server.x86_64 /workspace/webrtc
