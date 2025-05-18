@@ -7,8 +7,9 @@ steps:
     image: barichello/godot-ci:4.4
     commands:
       - echo "This is the build step"
-      - export PATH=$PATH:/bin/webrtc
       - pwd
       - godot --version
-      - godot --headless --no-window --export-release "Linux" server2.x86_64
+      - godot --headless --no-window --export-release "Linux" /bin/webrtc/server2.x86_64
       - ls
+    volumes:
+      - /bin/webrtc
