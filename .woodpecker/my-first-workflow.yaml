@@ -1,29 +1,48 @@
-when:
-  - event: push
-    branch: master
+version: "1"
 
 steps:
-  - name: Clone Repository
-    image: alpine/git
+  - name: clone-repo
+    image: alpine
     commands:
-      - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git
+      - apk add --no-cache git
+      - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git /drone/src/Godot
+      - mkdir -p /drone/src/build/linux
+      - mkdir -p /drone/src/build/windows
+      - mkdir -p /drone/src/build/mac
+      - mkdir -p /drone/src/build/web
 
-  - name: Install Dependencies
-    image: ubuntu
+  - name: export-linux
+    image: barichello/godot-ci:3.1.1
     commands:
-      - apt update && apt install -y wget unzip
-      - wget https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_linux.x86_64.zip
-      - unzip Godot_v4.4-stable_linux.x86_64.zip -d ./
-      - chmod +x Godot_v4.4-stable_linux.x86_64
-      - apt update && apt install -y libfontconfig1
-      - apt update && apt install -y wget unzip libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
-      - wget https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz
+      - cd /drone/src/Godot
+      - godot -v --export "Linux/X11" ../build/linux/$EXPORT_NAME.x86_64
+      - test -e ../build/linux/$EXPORT_NAME.x86_64
+    when:
+      branch: master
 
-      
-  - name: Build
-    image: ubuntu
+  - name: export-windows
+    image: barichello/godot-ci:4.4
     commands:
-      - ./Godot_v4.4-stable_linux.x86_64 --headless --no-window --export-release "Test Server" server.x86_64
-      - ls
+      - cd /drone/src/Godot
+      - godot -v --export "Windows Desktop" ../build/windows/$EXPORT_NAME.exe
+      - test -e ../build/windows/$EXPORT_NAME.exe
+    when:
+      branch: master
 
+  - name: export-mac
+    image: barichello/godot-ci:4.4
+    commands:
+      - cd /drone/src/Godot
+      - godot -v --export "Mac OSX" ../build/mac/$EXPORT_NAME.zip
+      - test -e ../build/mac/$EXPORT_NAME.zip
+    when:
+      branch: master
 
+  - name: export-web
+    image: barichello/godot-ci:4.4
+    commands:
+      - cd /drone/src/Godot
+      - godot -v --path /drone/src/Godot --export "HTML5" ../build/web/index.html
+      - test -e ../build/web/index.html
+    when:
+      branch: master
