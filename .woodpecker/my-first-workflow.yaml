@@ -22,5 +22,5 @@ steps:
   - name: Build Godot Project
     image: ubuntu
     commands:
-      - Godot_v4.0-stable_linux.x86_64 --export "Linux/X11" game.x86_64
+      - Godot_v4.4-stable_linux.x86_64 --export "Linux/X11" game.x86_64
       - ls
