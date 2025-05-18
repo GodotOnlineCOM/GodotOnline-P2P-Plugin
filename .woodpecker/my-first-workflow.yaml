@@ -1,24 +1,70 @@
-pipeline:
-  build:
-    image: barichello/godot-ci:4.4
+---
+# Godot 4.4 project pipeline using barichello/godot-ci
+# Works with Woodpecker v1.0+
+
+variables:
+  GODOT_VERSION: "4.4"
+  EXPORT_DIR: "exports"
+
+workspace:
+  base: /woodpecker
+  path: src
+
+steps:
+  validate:
+    name: "Validate Project"
+    image: barichello/godot-ci:${GODOT_VERSION}
     commands:
       - godot --version
-      - godot --headless --build-solutions --quit
+      - godot --headless --check-only --quit
     when:
-      event: [ push, pull_request ]
+      event: [push, pull_request, tag]
+
+  build:
+    name: "Build Project"
+    image: barichello/godot-ci:${GODOT_VERSION}
+    commands:
+      - godot --headless --build-solutions --quit
+    depends_on: [validate]
+    when:
+      event: [push, pull_request, tag]
 
   test:
-    image: barichello/godot-ci:4.4
+    name: "Run Tests"
+    image: barichello/godot-ci:${GODOT_VERSION}
     commands:
       - godot --headless --quit --test
+    depends_on: [build]
     when:
-      event: [ push, pull_request ]
+      event: [push, pull_request]
 
   export-html5:
-    image: barichello/godot-ci:4.4
+    name: "Export HTML5"
+    image: barichello/godot-ci:${GODOT_VERSION}
     commands:
-      - mkdir -p exports/html5
-      - godot --headless --quit --export-release "HTML5" exports/html5/index.html
-      - ls -la exports/html5/
+      - mkdir -p ${EXPORT_DIR}/html5
+      - godot --headless --quit --export-release "HTML5" ${EXPORT_DIR}/html5/index.html
+      - ls -la ${EXPORT_DIR}/html5/
+    depends_on: [test]
     when:
       event: tag
+      branch: main  # Sadece main branch'deki tag'ler için
+
+  export-linux:
+    name: "Export Linux"
+    image: barichello/godot-ci:${GODOT_VERSION}
+    commands:
+      - mkdir -p ${EXPORT_DIR}/linux
+      - godot --headless --quit --export-release "Linux/X11" ${EXPORT_DIR}/linux/game.x86_64
+    depends_on: [test]
+    when:
+      event: tag
+      branch: main
+
+services:
+  xvfb:
+    image: durdn/atlassian-xvfb
+    commands:
+      - Xvfb :1 -screen 0 1024x768x24
+    when:
+      event: [push, pull_request, tag]
