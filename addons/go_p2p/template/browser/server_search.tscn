@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=3 uid="uid://ra85b6k1sbvn"]
+
+[ext_resource type="Script" uid="uid://ue1kgyv2jip7" path="res://addons/go_p2p/template/browser/scripts/SCR_server_search.gd" id="1_ivtkc"]
+
+[node name="server_search" type="Control"]
+custom_minimum_size = Vector2(250, 450)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 250.0
+offset_bottom = 500.0
+script = ExtResource("1_ivtkc")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="inv_label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "QUICK CONNECT"
+
+[node name="INVBOX" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="inv_code" type="LineEdit" parent="VBoxContainer/INVBOX"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+placeholder_text = "INV CODE..."
+max_length = 5
+
+[node name="join_btn" type="Button" parent="VBoxContainer/INVBOX"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "JOIN"
+
+[node name="password_line" type="LineEdit" parent="VBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+placeholder_text = "Password..."
+max_length = 64
+secret = true
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="search_label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Search Server"
+
+[node name="search_line" type="LineEdit" parent="VBoxContainer"]
+layout_mode = 2
+placeholder_text = "DISABLED FOR NOW..."
+max_length = 20
+editable = false
+
+[connection signal="text_changed" from="VBoxContainer/INVBOX/inv_code" to="." method="_on_inv_code_text_changed"]
+[connection signal="pressed" from="VBoxContainer/INVBOX/join_btn" to="." method="_on_join_btn_pressed"]

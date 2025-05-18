@@ -1,0 +1,48 @@
+[gd_scene load_steps=4 format=3 uid="uid://c6snlyrykl5l6"]
+
+[ext_resource type="Texture2D" uid="uid://bco7ih3xyl4qr" path="res://addons/go_p2p/assets/kick.png" id="1_4ka1s"]
+[ext_resource type="Script" uid="uid://nf8s7fsrnd5v" path="res://addons/go_p2p/template/browser/scripts/SCR_peer_item.gd" id="1_npa5k"]
+[ext_resource type="Texture2D" uid="uid://bcunijrxmhoj6" path="res://addons/go_p2p/assets/kick_hovered.png" id="2_npa5k"]
+
+[node name="peer_item" type="Control"]
+custom_minimum_size = Vector2(260, 35)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 225.0
+offset_bottom = 35.0
+script = ExtResource("1_npa5k")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="name_panel" type="PanelContainer" parent="HBox"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="PEERNAME" type="RichTextLabel" parent="HBox/name_panel"]
+layout_mode = 2
+bbcode_enabled = true
+scroll_active = false
+vertical_alignment = 1
+
+[node name="button_panel" type="PanelContainer" parent="HBox"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
+[node name="BUTTON" type="TextureButton" parent="HBox/button_panel"]
+custom_minimum_size = Vector2(40, 25)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("1_4ka1s")
+texture_pressed = ExtResource("1_4ka1s")
+texture_hover = ExtResource("2_npa5k")
+ignore_texture_size = true
+stretch_mode = 5
+
+[connection signal="pressed" from="HBox/button_panel/BUTTON" to="." method="_on_button_pressed"]

@@ -1,0 +1,161 @@
+[gd_scene load_steps=6 format=3 uid="uid://cys0xqj10anb1"]
+
+[ext_resource type="Script" uid="uid://dtgvcaxn0vpuo" path="res://addons/go_p2p/template/browser/scripts/SCR_create_lobby.gd" id="1_3wdbq"]
+[ext_resource type="Texture2D" uid="uid://c8a5carolw2t2" path="res://addons/go_p2p/assets/eye_visible.png" id="1_yre5l"]
+[ext_resource type="Texture2D" uid="uid://dvydkb5r5oy8e" path="res://addons/go_p2p/assets/eye_hidden.png" id="2_3wdbq"]
+[ext_resource type="PackedScene" uid="uid://b6j1vosg5yqbd" path="res://addons/go_p2p/template/chat/chat_panel.tscn" id="4_qqvgi"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qqvgi"]
+
+[node name="create_lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1000.0
+offset_bottom = 500.0
+script = ExtResource("1_3wdbq")
+EYE_VISIBLE = ExtResource("1_yre5l")
+EYE_HIDDEN = ExtResource("2_3wdbq")
+
+[node name="MainContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBOX" type="VBoxContainer" parent="MainContainer"]
+custom_minimum_size = Vector2(650, 0)
+layout_mode = 2
+
+[node name="HEADER" type="Label" parent="MainContainer/VBOX"]
+layout_mode = 2
+text = "
+CREATE LOBBY
+"
+horizontal_alignment = 1
+
+[node name="LOBBYNAME" type="Label" parent="MainContainer/VBOX"]
+layout_mode = 2
+text = "Lobby Name"
+
+[node name="lobby_name" type="LineEdit" parent="MainContainer/VBOX"]
+layout_mode = 2
+max_length = 32
+
+[node name="LOBBYPASSWORD" type="Label" parent="MainContainer/VBOX"]
+layout_mode = 2
+text = "Password"
+
+[node name="BOXPASS" type="HBoxContainer" parent="MainContainer/VBOX"]
+layout_mode = 2
+
+[node name="lobby_password" type="LineEdit" parent="MainContainer/VBOX/BOXPASS"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+max_length = 32
+secret = true
+
+[node name="eye" type="TextureButton" parent="MainContainer/VBOX/BOXPASS"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+texture_normal = ExtResource("1_yre5l")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="MAXPEER" type="Label" parent="MainContainer/VBOX"]
+layout_mode = 2
+text = "Max Peer Count"
+
+[node name="SpinBox" type="SpinBox" parent="MainContainer/VBOX"]
+layout_mode = 2
+min_value = 1.0
+max_value = 24.0
+value = 1.0
+
+[node name="BOXVISIBLE" type="HBoxContainer" parent="MainContainer/VBOX"]
+layout_mode = 2
+
+[node name="VISIBLE" type="Label" parent="MainContainer/VBOX/BOXVISIBLE"]
+layout_mode = 2
+text = "Visible to everyone?"
+
+[node name="CheckBox" type="CheckBox" parent="MainContainer/VBOX/BOXVISIBLE"]
+layout_mode = 2
+button_pressed = true
+
+[node name="host_btn" type="Button" parent="MainContainer/VBOX"]
+custom_minimum_size = Vector2(150, 35)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "HOST LOBBY"
+
+[node name="VBOX2" type="VBoxContainer" parent="MainContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="InviteContainer" type="HBoxContainer" parent="MainContainer/VBOX2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainContainer/VBOX2/InviteContainer"]
+layout_mode = 2
+text = "Invite Code:"
+
+[node name="InvCode" type="LineEdit" parent="MainContainer/VBOX2/InviteContainer"]
+layout_mode = 2
+theme_override_styles/read_only = SubResource("StyleBoxEmpty_qqvgi")
+text = "TEST"
+editable = false
+secret = true
+
+[node name="InvBtn" type="TextureButton" parent="MainContainer/VBOX2/InviteContainer"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+texture_normal = ExtResource("1_yre5l")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="peer_panel" type="Panel" parent="MainContainer/VBOX2"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/VBOX2/peer_panel"]
+custom_minimum_size = Vector2(290, 200)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -125.0
+offset_right = 125.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PeersContainer" type="VBoxContainer" parent="MainContainer/VBOX2/peer_panel/ScrollContainer"]
+layout_mode = 2
+
+[node name="chat_panel" parent="MainContainer/VBOX2" instance=ExtResource("4_qqvgi")]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="MainContainer/VBOX2"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="start_btn" type="Button" parent="MainContainer/VBOX2"]
+custom_minimum_size = Vector2(150, 35)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "START LOBBY"
+
+[node name="quit_btn" type="Button" parent="MainContainer/VBOX2"]
+custom_minimum_size = Vector2(150, 35)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "LEAVE LOBBY"
+
+[connection signal="pressed" from="MainContainer/VBOX/BOXPASS/eye" to="." method="_on_eye_pressed"]
+[connection signal="pressed" from="MainContainer/VBOX/host_btn" to="." method="_on_host_btn_pressed"]
+[connection signal="pressed" from="MainContainer/VBOX2/InviteContainer/InvBtn" to="." method="_on_inv_btn_pressed"]
+[connection signal="pressed" from="MainContainer/VBOX2/start_btn" to="." method="_on_start_btn_pressed"]
+[connection signal="pressed" from="MainContainer/VBOX2/quit_btn" to="." method="_on_quit_btn_pressed"]
