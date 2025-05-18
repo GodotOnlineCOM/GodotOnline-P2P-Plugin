@@ -6,29 +6,18 @@ steps:
   - name: Clone Repository
     image: alpine/git
     commands:
-      - mkdir /workspace
-      - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git /workspace
-      - cd /workspace
+      - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git
+      - ls
 
   - name: Install Dependencies
     image: ubuntu
     commands:
       - apt update && apt install -y wget unzip
       - wget https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_linux.x86_64.zip
-      - mkdir /godot
-      - unzip Godot_v4.4-stable_linux.x86_64.zip -d /workspace/godot
-      - chmod +x /workspace/godot/Godot_v4.4-stable_linux.x86_64
+      - unzip Godot_v4.4-stable_linux.x86_64.zip
+      - chmod +x Godot_v4.4-stable_linux.x86_64
 
   - name: Build Godot Project
     image: ubuntu
     commands:
-      - cd /workspace
-      - mkdir /build
-      - /workspace/godot/Godot_v4.4-stable_linux.x86_64 --export "Linux/X11" build/game.x86_64
-
-  - name: Upload Artifacts
-    image: ubuntu
-    commands:
-      - cd /workspace
-      - mkdir /artifacts
-      - mv /workspace/build/game.x86_64 /workspace/artifacts/
+      - Godot_v4.4-stable_linux.x86_64 --export "Linux/X11" game.x86_64
