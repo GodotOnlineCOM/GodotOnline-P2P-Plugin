@@ -1,60 +1,10 @@
-version: "1"
-
-variables:
-  GODOT_VERSION: "4.4"
-  EXPORT_DIR: "exports"
-
-workspace:
-  base: /woodpecker
-  path: src
+when:
+  - event: push
+    branch: main
 
 steps:
-  validate:
-    name: Validate Project
-    image: barichello/godot-ci:${GODOT_VERSION}
+  - name: build
+    image: barichello/godot-ci:4.4
     commands:
+      - echo "This is the build step"
       - godot --version
-      - godot --headless --check-only --quit
-    when:
-      event: [push, pull_request, tag]
-
-  build:
-    name: Build Project
-    image: barichello/godot-ci:${GODOT_VERSION}
-    commands:
-      - godot --headless --build-solutions --quit
-    depends_on: [validate]
-    when:
-      event: [push, pull_request, tag]
-
-  test:
-    name: Run Tests
-    image: barichello/godot-ci:${GODOT_VERSION}
-    commands:
-      - godot --headless --quit --test
-    depends_on: [build]
-    when:
-      event: [push, pull_request]
-
-  export-html5:
-    name: Export HTML5
-    image: barichello/godot-ci:${GODOT_VERSION}
-    commands:
-      - mkdir -p ${EXPORT_DIR}/html5
-      - godot --headless --quit --export-release "HTML5" ${EXPORT_DIR}/html5/index.html
-      - ls -la ${EXPORT_DIR}/html5/
-    depends_on: [test]
-    when:
-      event: tag
-      branch: main
-
-  export-linux:
-    name: Export Linux
-    image: barichello/godot-ci:${GODOT_VERSION}
-    commands:
-      - mkdir -p ${EXPORT_DIR}/linux
-      - godot --headless --quit --export-release "Linux/X11" ${EXPORT_DIR}/linux/game.x86_64
-    depends_on: [test]
-    when:
-      event: tag
-      branch: main
