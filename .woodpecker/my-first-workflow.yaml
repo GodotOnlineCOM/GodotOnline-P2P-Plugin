@@ -1,48 +1,85 @@
-version: "1"
+when:
+  branch: ${CI_REPO_DEFAULT_BRANCH}
+  event: push
+  path:
+    include: ['.woodpecker/*', 'Dockerfile*', '*.sh']
+
+variables:
+  - &base Dockerfile.base
+  - &standard Dockerfile
+  - &dotnet Dockerfile.dotnet
+  - &base_platforms linux/amd64,linux/386,linux/arm64/v8,linux/arm/v7
+  - &standard_platforms linux/amd64,linux/386,linux/arm64/v8,linux/arm/v7
+  - &dotnet_platforms linux/amd64,linux/arm64/v8,linux/arm/v7
+  - &cr ${CI_FORGE_URL:8}/${CI_REPO_OWNER,,}/godot-ci
+  - &br ${CI_FORGE_URL}/api/packages/${CI_REPO_OWNER}/generic/godot-ci-butler
 
 steps:
-  - name: clone-repo
-    image: alpine
+  - name: artifact
+    image: debian:12-slim
     commands:
-      - apk add --no-cache git
-      - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git /drone/src/Godot
-      - mkdir -p /drone/src/build/linux
-      - mkdir -p /drone/src/build/windows
-      - mkdir -p /drone/src/build/mac
-      - mkdir -p /drone/src/build/web
+      - sh artifact.sh
 
-  - name: export-linux
-    image: barichello/godot-ci:3.1.1
-    commands:
-      - cd /drone/src/Godot
-      - godot -v --export "Linux/X11" ../build/linux/$EXPORT_NAME.x86_64
-      - test -e ../build/linux/$EXPORT_NAME.x86_64
-    when:
-      branch: master
+  - name: next:base
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      dockerfile: *base
+      platforms: *base_platforms
+      provenance: false
+      repo:
+        - *cr
+      tags: next-base
+      logins:
+        - registry: ${CI_FORGE_URL}
+          username: ${CI_REPO_OWNER,,}
+          password:
+            from_secret: cr_token
+      build_args_from_env:
+        - GODOT_CI_BUTLER_BR
+        - GODOT_CI_BUTLER_BR_ACCESS_TOKEN
+    environment:
+      GODOT_CI_BUTLER_BR: *br
+      GODOT_CI_BUTLER_BR_ACCESS_TOKEN:
+        from_secret: br_token
+    depends_on:
+      - artifact
 
-  - name: export-windows
-    image: barichello/godot-ci:4.4
-    commands:
-      - cd /drone/src/Godot
-      - godot -v --export "Windows Desktop" ../build/windows/$EXPORT_NAME.exe
-      - test -e ../build/windows/$EXPORT_NAME.exe
-    when:
-      branch: master
+  - name: next:standard
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      dockerfile: *standard
+      platforms: *standard_platforms
+      provenance: false
+      repo:
+        - *cr
+      tags: next
+      logins:
+        - registry: ${CI_FORGE_URL}
+          username: ${CI_REPO_OWNER,,}
+          password:
+            from_secret: cr_token
+      build_args:
+        - FROM_TARGET=${CI_FORGE_URL:8}/${CI_REPO_OWNER,,}/godot-ci:next-base
+    depends_on:
+      - artifact
+      - next:base
 
-  - name: export-mac
-    image: barichello/godot-ci:4.4
-    commands:
-      - cd /drone/src/Godot
-      - godot -v --export "Mac OSX" ../build/mac/$EXPORT_NAME.zip
-      - test -e ../build/mac/$EXPORT_NAME.zip
-    when:
-      branch: master
-
-  - name: export-web
-    image: barichello/godot-ci:4.4
-    commands:
-      - cd /drone/src/Godot
-      - godot -v --path /drone/src/Godot --export "HTML5" ../build/web/index.html
-      - test -e ../build/web/index.html
-    when:
-      branch: master
+  - name: next:dotnet
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      dockerfile: *dotnet
+      platforms: *dotnet_platforms
+      provenance: false
+      repo:
+        - *cr
+      tags: next-dotnet
+      logins:
+        - registry: ${CI_FORGE_URL}
+          username: ${CI_REPO_OWNER,,}
+          password:
+            from_secret: cr_token
+      build_args:
+        - FROM_TARGET=${CI_FORGE_URL:8}/${CI_REPO_OWNER,,}/godot-ci:next-base
+    depends_on:
+      - artifact
+      - next:base
