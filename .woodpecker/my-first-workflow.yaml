@@ -1,56 +1,24 @@
-when:
-  - event: push
-    branch: master
-    
-labels:
-  platform: linux/amd64
-
-variables:
-  - &godot_build_image 'barichello/godot-ci:4.4'
-
-steps:
-  # TODO: Wayland version too/instead when that becomes available
-  - name: build-linux
-    image: *godot_build_image
-    when:
-      - event: tag
+pipeline:
+  build:
+    image: barichello/godot-ci:4.4
     commands:
-      - pwd
-      - echo "Building Linux/X11 version…"
-      - mkdir godot/build-linux
-      - godot -v \
-          --headless \
-          --path "godot" \
-          --export-release "Linux/X11"
-
-  - name: build-macos
-    image: *godot_build_image
+      - godot --version
+      - godot --headless --build-solutions --quit
     when:
-      - event: tag
-    commands:
-      - echo "Building macOS version…"
-      - mkdir godot/build-macos
-      - godot -v \
-          --headless \
-          --path "godot" \
-          --export-release "macOS"
+      event: [ push, pull_request ]
 
-  - name: build-windows
-    image: *godot_build_image
+  test:
+    image: barichello/godot-ci:4.4
+    commands:
+      - godot --headless --quit --test
     when:
-      - event: tag
+      event: [ push, pull_request ]
+
+  export-html5:
+    image: barichello/godot-ci:4.4
     commands:
-      - echo "Building Windows desktop version…"
-      - mkdir godot/build-windows
-      - godot -v \
-          --headless \
-          --path "godot" \
-          --export-release "Windows Desktop"
-
-  # This uses the Gitea Release plugin to automatically create a Release in
-  # the Codeberg repo and upload the build artifacts.
-  
-
-# TODO: Use the Mastodon Post plugin to crow about your accomplishment!
-#
-# https://woodpecker-ci.org/plugins/Mastodon%20Post
+      - mkdir -p exports/html5
+      - godot --headless --quit --export-release "HTML5" exports/html5/index.html
+      - ls -la exports/html5/
+    when:
+      event: tag
