@@ -12,9 +12,8 @@ steps:
   - name: Build Godot Project
     image: ubuntu
     commands:
-      - sudo su
-      - cd /bin/webrtc
-      - godot --headless --export-debug "Linux/X11" build/server.x86_64
+      - -c cd /bin/webrtc
+      - -c godot --headless --export-debug "Linux/X11" build/server.x86_64
 
   - name: Upload Artifacts
     image: alpine
