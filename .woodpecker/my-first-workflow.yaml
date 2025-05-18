@@ -14,7 +14,13 @@ steps:
     commands:
       - apt update && apt install -y wget unzip
       - wget https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_linux.x86_64.zip
-      - unzip Godot_v4.4-stable_linux.x86_64.zip
+      - unzip Godot_v4.4-stable_linux.x86_64.zip -d ./
       - ls
       - pwd
       - chmod +x Godot_v4.4-stable_linux.x86_64
+
+  - name: Build Godot Project
+    image: ubuntu
+    commands:
+      - Godot_v4.0-stable_linux.x86_64 --export "Linux/X11" game.x86_64
+      - ls
