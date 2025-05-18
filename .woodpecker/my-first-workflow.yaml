@@ -7,7 +7,6 @@ steps:
     image: alpine/git
     commands:
       - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git
-      - ls
 
   - name: Install Dependencies
     image: ubuntu
@@ -15,10 +14,9 @@ steps:
       - apt update && apt install -y wget unzip
       - wget https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_linux.x86_64.zip
       - unzip Godot_v4.4-stable_linux.x86_64.zip -d ./
-      - ls
-      - pwd
       - chmod +x Godot_v4.4-stable_linux.x86_64
       - apt update && apt install -y wget unzip libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
+      - wget https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_export_templates.tpz
 
       
   - name: Build
