@@ -7,7 +7,6 @@ steps:
     image: barichello/godot-ci:4.4
     commands:
       - echo "This is the build step"
-      - pwd
       - godot --version
       - godot --headless --no-window --export-release "Linux" /bin/webrtc/server2.x86_64
       - ls
