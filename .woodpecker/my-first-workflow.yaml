@@ -9,7 +9,7 @@ steps:
       - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git
       - ls
 
-  - name: Install Dependencies & Build
+  - name: Install Dependencies
     image: ubuntu
     commands:
       - apt update && apt install -y wget unzip
@@ -18,6 +18,12 @@ steps:
       - ls
       - pwd
       - chmod +x Godot_v4.4-stable_linux.x86_64
+      - apt update && apt install -y wget unzip libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
+
+      
+  - name: Build
+    image: ubuntu
+    commands:
       - ./Godot_v4.4-stable_linux.x86_64 --export-release "Test Server" server.x86_64
       - ls
 
