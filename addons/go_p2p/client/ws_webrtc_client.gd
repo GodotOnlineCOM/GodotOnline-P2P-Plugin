@@ -5,7 +5,7 @@ enum Message {
 	SEAL, PEERS, LOBBY_LIST, CONNECT, PING, ERROR, KICK
 }
 
-@export var autojoin := true
+@export var autojoin := true # If the connection is lost, it allows to reconnect.
 @export var lobby := "" # Will create a new lobby if empty.
 @export var mesh := true # Will use the lobby host as relay otherwise.
 
@@ -29,14 +29,14 @@ signal lobby_list(list)
 signal error_occurred(message)
 
 
-var ping_timer = Timer.new()
+var ping_timer: Timer = Timer.new()
 
-var version : String
-var prefix : String
+var version: String
+var prefix: String
 var full_URL: String = ""
 var version_order: int = 0
 
-var timer = Timer.new()
+var timer: Timer = Timer.new()
 const max_attempt: int = 5
 var current_attempt: int = 0
 
@@ -63,7 +63,8 @@ func _ready() -> void:
 	if GoSettings.AUTO_CONNECT:
 		_initial()
 
-func _initial() -> void: # Creating a new http_request to fetch valid servers.
+# Creating a new http_request to fetch valid servers.
+func _initial() -> void:
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.request_completed.connect(self._on_request_completed)
@@ -90,8 +91,8 @@ func _on_request_completed(result, response_code, headers, body) -> void:
 	timer.timeout.connect(self._timeout);timer.wait_time = 1.0;
 	add_child(timer);timer.start();
 
-
-func _timeout() -> void: # SEARCH VALID SERVER
+# SEARCH FOR VALID SERVER
+func _timeout() -> void:
 	if current_attempt < max_attempt:
 		# If it connects to the server we will use it for the whole process
 		if ws.get_ready_state() == WebSocketPeer.STATE_OPEN:
@@ -112,20 +113,22 @@ func _timeout() -> void: # SEARCH VALID SERVER
 			
 			PrintHelper.critical("No valid server.")
 
-
-func _ping_timeout(): # ESTABLISH SERVER CONNECTION. PREVENT GETTING KICKED
+# ESTABLISH SERVER CONNECTION. PREVENT GETTING KICKED
+func _ping_timeout(): 
 	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN:
 		_send_msg(Message.PING,0 if mesh else 1)
 	pass
 
-func connect_to_url(url): # CONNECT SERVER USING URL
+# CONNECT SERVER USING URL
+func connect_to_url(url): 
 	close()
 	code = 1000
 	reason = "Unknown"
 	if url != "":
 		ws.connect_to_url(url)
 
-func close(): # CLOSE CONNECTION
+# CLOSE CONNECTION
+func close(): 
 	ws.close()
 
 func _process(delta: float) -> void:
