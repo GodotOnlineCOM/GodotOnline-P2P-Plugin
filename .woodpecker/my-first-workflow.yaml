@@ -8,7 +8,7 @@ steps:
     commands:
       - echo "This is the build step"
       - export PATH=$PATH:/bin/webrtc
-      - godot --version
-      - godot --headless --no-window --export-release "Linux" /bin/webrtc/server2.x86_64
       - pwd
+      - godot --version
+      - godot --headless --no-window --export-release "Linux" server2.x86_64
       - ls
