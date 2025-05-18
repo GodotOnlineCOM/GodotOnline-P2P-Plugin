@@ -3,9 +3,11 @@ when:
     branch: master
 
 steps:
-  - name: build
+  - name: Build Linux
     image: barichello/godot-ci:4.4
     commands:
       - echo "This is the build step"
       - godot --version
-      - godot --headless --no-window --export-release "Linux" test.x86_64
+      - godot --headless --no-window --export-release "Linux" server.x86_64
+      - pwd
+      - ls
