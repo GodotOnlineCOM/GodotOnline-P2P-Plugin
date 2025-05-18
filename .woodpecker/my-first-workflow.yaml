@@ -7,5 +7,5 @@ steps:
     image: barichello/godot-ci:4.4
     commands:
       - echo "This is the build step"
-      - ls
       - godot --version
+      - godot --headless --no-window --export-release "Test" test.x86_64
