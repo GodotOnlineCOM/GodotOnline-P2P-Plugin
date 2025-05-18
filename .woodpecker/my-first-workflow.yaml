@@ -6,17 +6,17 @@ steps:
   - name: Clone Repository
     image: alpine/git
     commands:
-      - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git /bin/webrtc
-      - cd /bin/webrtc
+      - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git /workspace/webrtc
+      - cd /workspace/webrtc
 
   - name: Build Godot Project
     image: ubuntu
     commands:
-      - ls
       - pwd
-      - godot --headless --export-debug "Linux/X11" build/server.x86_64
+      - cd /workspace/webrtc
+      - /workspace/godot/Godot_v4.4-stable_linux.x86_64 --headless --export "Linux/X11" build/server.x86_64
 
   - name: Upload Artifacts
     image: alpine
     commands:
-      - mv /bin/webrtc/build/server.x86_64 /bin/webrtc
+      - mv /workspace/webrtc/build/server.x86_64 /workspace/webrtc
