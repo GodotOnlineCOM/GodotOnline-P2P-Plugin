@@ -38,7 +38,7 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
 		if event.keycode == KEY_R:
-			GoClient._get_lobby_list()
+			GoClient.get_lobby_list()
 
 func _on_tab_bar_tab_changed(tab: int) -> void:
 	match tab:

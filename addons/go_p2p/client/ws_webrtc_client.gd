@@ -191,7 +191,7 @@ func _parse_msg():
 			return false
 	return true # Parsed
 
-func _get_lobby_list():
+func get_lobby_list():
 	if ws.get_ready_state() != WebSocketPeer.STATE_OPEN:
 		connect_to_url(full_URL);await get_tree().create_timer(0.5).timeout # gives enough connection time
 	return _send_msg(Message.LOBBY_LIST, 0 if mesh else 1, GoSettings.API_KEY)
