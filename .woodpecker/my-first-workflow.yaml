@@ -3,9 +3,27 @@ when:
     branch: master
 
 steps:
-  - name: build
-    image: debian
+  - name: Clone Repository
+    image: alpine/git
     commands:
-      - echo "This is the build step"
-      - echo "binary-data-123" > executable
-      - pwd
+      - git clone https://github.com/GodotOnlineCOM/GodotOnline-P2P-Plugin.git /workspace
+      - cd /workspace
+
+  - name: Install Dependencies
+    image: ubuntu
+    commands:
+      - apt update && apt install -y wget unzip
+      - wget https://github.com/godotengine/godot-builds/releases/download/4.4-stable/Godot_v4.4-stable_linux.x86_64.zip
+      - unzip Godot_v4.4-stable_linux.x86_64.zip -d /workspace/godot
+      - chmod +x /workspace/godot/Godot_v4.4-stable_linux.x86_64
+
+  - name: Build Godot Project
+    image: ubuntu
+    commands:
+      - cd /workspace
+      - /workspace/godot/Godot_v4.4-stable_linux.x86_64 --export "Linux/X11" build/game.x86_64
+
+  - name: Upload Artifacts
+    image: alpine
+    commands:
+      - mv /workspace/build/game.x86_64 /workspace/artifacts/
