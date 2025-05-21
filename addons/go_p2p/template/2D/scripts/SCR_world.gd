@@ -10,6 +10,7 @@ extends Node2D
 # Dictionary to track spawned players by peer ID
 var spawned_players := {}
 var lastpos = Vector2(100,100)
+
 func _ready():
 	# Connect multiplayer signals
 	multiplayer.peer_connected.connect(self._mp_peer_connected)
@@ -20,7 +21,6 @@ func _ready():
 		_spawn_player(multiplayer.get_unique_id())
 	
 	for i in multiplayer.get_peers():
-
 		_spawn_player(i)
 
 func _mp_peer_connected(id: int):
@@ -41,9 +41,7 @@ func _spawn_player(id: int):
 	new_player.place_bomb.connect(self._place_bomb)
 	# Configure player
 	new_player.name = str(id)
-	
 	new_player.set_multiplayer_authority(id)
-	
 	# Set as local player if this is our ID
 	if id == multiplayer.get_unique_id():
 		new_player.is_local_player = true

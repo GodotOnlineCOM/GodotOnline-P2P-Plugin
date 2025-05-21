@@ -142,11 +142,20 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="start_btn" type="Button" parent="MainContainer/VBOX2"]
+[node name="StartContainer" type="HBoxContainer" parent="MainContainer/VBOX2"]
+layout_mode = 2
+
+[node name="start_btn_2d" type="Button" parent="MainContainer/VBOX2/StartContainer"]
 custom_minimum_size = Vector2(150, 35)
 layout_mode = 2
 size_flags_horizontal = 4
-text = "START LOBBY"
+text = "START LOBBY 2D"
+
+[node name="start_btn_3d" type="Button" parent="MainContainer/VBOX2/StartContainer"]
+custom_minimum_size = Vector2(150, 35)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "START LOBBY 3D"
 
 [node name="quit_btn" type="Button" parent="MainContainer/VBOX2"]
 custom_minimum_size = Vector2(150, 35)
@@ -157,5 +166,6 @@ text = "LEAVE LOBBY"
 [connection signal="pressed" from="MainContainer/VBOX/BOXPASS/eye" to="." method="_on_eye_pressed"]
 [connection signal="pressed" from="MainContainer/VBOX/host_btn" to="." method="_on_host_btn_pressed"]
 [connection signal="pressed" from="MainContainer/VBOX2/InviteContainer/InvBtn" to="." method="_on_inv_btn_pressed"]
-[connection signal="pressed" from="MainContainer/VBOX2/start_btn" to="." method="_on_start_btn_pressed"]
+[connection signal="pressed" from="MainContainer/VBOX2/StartContainer/start_btn_2d" to="." method="_on_start_btn_pressed" binds= [&"res://addons/go_p2p/template/2D/world.tscn"]]
+[connection signal="pressed" from="MainContainer/VBOX2/StartContainer/start_btn_3d" to="." method="_on_start_btn_pressed" binds= [&"res://addons/go_p2p/template/3D/world_3d.tscn"]]
 [connection signal="pressed" from="MainContainer/VBOX2/quit_btn" to="." method="_on_quit_btn_pressed"]

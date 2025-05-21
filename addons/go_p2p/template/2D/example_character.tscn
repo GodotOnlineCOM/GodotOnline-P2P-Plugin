@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://do4jcujcdw15v"]
 
-[ext_resource type="Script" uid="uid://c0ldnxg2mh1ap" path="res://addons/go_p2p/template/2D/scripts/SCR_player_controller.gd.gd" id="1_hixh1"]
+[ext_resource type="Script" uid="uid://c0ldnxg2mh1ap" path="res://addons/go_p2p/template/2D/scripts/SCR_player_controller.gd" id="1_hixh1"]
 [ext_resource type="Texture2D" uid="uid://omtapnwcct0y" path="res://addons/go_p2p/assets/2D/character_32x32.png" id="3_q5ywa"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hixh1"]
@@ -68,3 +68,6 @@ scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_js6vv")
 animation = &"idle"
 offset = Vector2(0, -6)
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(0, -20)

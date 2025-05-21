@@ -154,10 +154,7 @@ func update_animations():
 		animated_sprite_2d.play("walk")
 	else:
 		animated_sprite_2d.play("idle")
-
 	animated_sprite_2d.flip_h = flip_h
-
-
 	rpc_update_animations.rpc(is_walking, flip_h)
 
 # RPC Functions

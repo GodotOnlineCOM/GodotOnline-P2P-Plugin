@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://df823chkca0n5"]
+
+[ext_resource type="Texture2D" uid="uid://bnayaqgmgqvo6" path="res://addons/go_p2p/assets/3D/bomb/explosion.png" id="1_xv3pn"]
+[ext_resource type="Script" uid="uid://6mgafom480h1" path="res://addons/go_p2p/template/3D/scripts/SCR_explosion_particle.gd" id="2_waopf"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_waopf"]
+transparency = 1
+shading_mode = 0
+diffuse_mode = 3
+specular_mode = 2
+albedo_texture = ExtResource("1_xv3pn")
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_swy6y"]
+material = SubResource("StandardMaterial3D_waopf")
+size = Vector2(2, 2)
+
+[node name="Explosion" type="CPUParticles3D"]
+emitting = false
+amount = 16
+lifetime = 2.0
+one_shot = true
+speed_scale = 3.0
+explosiveness = 1.0
+randomness = 1.0
+mesh = SubResource("QuadMesh_swy6y")
+emission_shape = 1
+emission_sphere_radius = 1.0
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 15.0
+script = ExtResource("2_waopf")

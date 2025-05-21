@@ -31,6 +31,10 @@ multirun/window_args=["listen", "join"]
 
 enabled=PackedStringArray("res://addons/go_p2p/plugin.cfg")
 
+[global_group]
+
+player=""
+
 [input]
 
 move_left={

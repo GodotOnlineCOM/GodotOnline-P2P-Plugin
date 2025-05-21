@@ -6,9 +6,10 @@ const PEER_ITEM = preload("res://addons/go_p2p/template/browser/peer_item.tscn")
 @onready var inv_btn: TextureButton = $MainContainer/VBOX2/InviteContainer/InvBtn
 @onready var peers_container: VBoxContainer = $MainContainer/VBOX2/peer_panel/ScrollContainer/PeersContainer
 
-@onready var start_btn: Button = $MainContainer/VBOX2/start_btn
+@onready var start_btn: HBoxContainer = $MainContainer/VBOX2/StartContainer
 @onready var quit_btn: Button = $MainContainer/VBOX2/quit_btn
 
+@export var next_scene: String = "res://addons/go_p2p/template/3D/world_3d.tscn"
 
 @onready var lobby_name: LineEdit = $MainContainer/VBOX/lobby_name
 @onready var eye: TextureButton = $MainContainer/VBOX/BOXPASS/eye
@@ -95,14 +96,14 @@ func _on_host_btn_pressed() -> void:
 	pass
 
 
-func _on_start_btn_pressed() -> void:
-	_start_lobby.rpc()
+func _on_start_btn_pressed(path : String) -> void:
+	_start_lobby.rpc(path)
 	GoClient.seal_lobby()
 	pass 
 
 @rpc("any_peer","call_local")
-func _start_lobby():
-	get_tree().change_scene_to_file("res://addons/go_p2p/template/2D/world.tscn")
+func _start_lobby(path : String):
+	get_tree().change_scene_to_file(path)
 	pass
 
 func _on_inv_btn_pressed() -> void:
