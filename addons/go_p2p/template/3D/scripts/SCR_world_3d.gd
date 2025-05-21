@@ -118,7 +118,7 @@ func _select_bomber():
 @rpc("any_peer","call_local","reliable")
 func _restart(who):
 	is_game_finished = true
-	time_label.text = "%s WON! - GAME WILL RESTART IN 5 SECOND." % GoData.peers[alive_players[0]["nickname"]]
+	time_label.text = "%s WON! - GAME WILL RESTART IN 5 SECOND." % GoData.peers[alive_players[0]]["nickname"]
 	await get_tree().create_timer(5).timeout
 	get_tree().change_scene_to_file("res://addons/go_p2p/template/3D/world_3d.tscn")
 
