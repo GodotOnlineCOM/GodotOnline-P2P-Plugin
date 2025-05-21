@@ -111,7 +111,9 @@ func _select_bomber():
 	if multiplayer.get_unique_id() == 1:
 		if alive_players.size() > 1:
 			var random_number = randi_range(0,alive_players.size() - 1)
-			_bomb_owner.rpc(alive_players[random_number])
+			var random_time = randi_range(10,35)
+			_bomb_owner.rpc(alive_players[random_number],random_time)
+			
 		else:
 			_restart.rpc(alive_players)
 
@@ -158,6 +160,6 @@ func _eliminate(who,pos):
 
 
 @rpc("any_peer","call_local","reliable")
-func _bomb_owner(id):
+func _bomb_owner(id,time):
 	var placement = players_node.get_node(str(id))
-	bomb.stick_owner(placement)
+	bomb.stick_owner(placement,time)

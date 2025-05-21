@@ -27,11 +27,11 @@ func _on_body_entered(body: Node3D) -> void:
 		change_player.emit(body.name)
 	pass
 
-func stick_owner(new_owner):
+func stick_owner(new_owner,time : int = 10):
 	ready_for_stick = true
 	my_owner = new_owner
 	if explode_timer.is_stopped():
-		explode_timer.start()
+		explode_timer.start(time)
 	pass
 
 
