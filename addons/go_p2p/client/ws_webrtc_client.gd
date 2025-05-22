@@ -60,6 +60,15 @@ var _visible: bool = true
 func _ready() -> void:
 	version = GoSettings.VERSION
 	prefix = GoSettings.PREFIX
+	
+	ping_timer.set_wait_time(60.0)
+	ping_timer.timeout.connect(_ping_timeout)
+	add_child(ping_timer)
+
+	timer.set_wait_time(1.0)
+	timer.timeout.connect(_timeout)
+	add_child(timer)
+
 	if GoSettings.AUTO_CONNECT:
 		_initial()
 
@@ -88,16 +97,14 @@ func _on_request_completed(result, response_code, headers, body) -> void:
 	full_URL = prefix + avaible_servers[version_order]
 	connect_to_url(full_URL)
 	# Create a timer that will check if the server is available. 
-	timer.timeout.connect(self._timeout);timer.wait_time = 1.0;
-	add_child(timer);timer.start();
+	timer.start();
 
 # SEARCH FOR VALID SERVER
 func _timeout() -> void:
 	if current_attempt < max_attempt:
 		# If it connects to the server we will use it for the whole process
 		if ws.get_ready_state() == WebSocketPeer.STATE_OPEN:
-			ping_timer.timeout.connect(self._ping_timeout);ping_timer.wait_time = 60.0;
-			add_child(ping_timer);ping_timer.start();
+			ping_timer.start();
 			timer.stop()
 		current_attempt += 1
 	else:
@@ -175,7 +182,7 @@ func _parse_msg():
 		Message.PEER_CONNECT:
 			peer_connected.emit(src_id)
 		Message.PEER_DISCONNECT:
-			peer_connected.emit(src_id)
+			peer_disconnected.emit(src_id)
 		Message.OFFER:
 			offer_received.emit(src_id, msg.data)
 		Message.ANSWER:
