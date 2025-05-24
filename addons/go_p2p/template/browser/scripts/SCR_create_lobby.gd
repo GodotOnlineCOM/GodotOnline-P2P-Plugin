@@ -32,9 +32,9 @@ func _ready() -> void:
 	start_container.hide()
 	vbox_2.hide()
 	lobby_name.text = "%s' Lobby" % GoData.MYusername
+	GoData.peers[multiplayer.get_unique_id()] = {"nickname":GoData.MYusername,"color":GoData.MYcolor.to_html(),"is_server":true}
 
-
-@rpc("any_peer", "call_local")
+@rpc("any_peer", "call_local","reliable")
 func _register_peer(id,nick,color):
 	GoData.peers[id] = {"nickname":nick,"color":color.to_html(),"is_server":false}
 	if id == multiplayer.get_unique_id():
@@ -101,7 +101,7 @@ func _on_start_btn_pressed(path : String) -> void:
 	GoClient.seal_lobby()
 	pass 
 
-@rpc("any_peer","call_local")
+@rpc("any_peer","call_local","reliable")
 func _start_lobby(path : String):
 	get_tree().change_scene_to_file(path)
 	pass

@@ -9,6 +9,6 @@ func _chat_message(nick, message, color):
 
 func _input(event: InputEvent) -> void:
 	if Input.is_key_pressed(KEY_ENTER):
-		if type_text.text != "" and not multiplayer.get_peers().is_empty():
+		if type_text.text != "":
 			_chat_message.rpc(GoData.MYusername,type_text.text,GoData.MYcolor.to_html())
 			type_text.text = ""
